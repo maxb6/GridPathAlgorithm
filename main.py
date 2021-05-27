@@ -32,7 +32,7 @@ def createGridElement(number, edges):
     return element
 
 
-userRows = int(input("Amount of Rows?"))
+userRows = int(input("\nAmount of Rows?"))
 userColumns = int(input("Amount of Columns?"))
 
 edges = (list(string.ascii_letters))  # list of alphabetical edges (lowercase then uppercase)
