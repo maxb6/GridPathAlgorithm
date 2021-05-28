@@ -31,10 +31,19 @@ def createGridElement(number, edges):
     element = GridElement(number, locationType, edges, "0")
     return element
 
+print("=================================================================")
+print("Program Begins:")
+userRows = int(input("\n\nEnter amount of Rows? "))
+userColumns = int(input("Enter amount of Columns? "))
+print("\n")
+print("=================================================================")
 
-userRows = int(input("\nAmount of Rows?"))
-userColumns = int(input("Amount of Columns?"))
+print("Generated Map:\n")
 
+
+
+print("=================================================================")
+print("Information of each cell:\n")
 edges = (list(string.ascii_letters))  # list of alphabetical edges (lowercase then uppercase)
 gridSize = userRows * userColumns
 l = 0
