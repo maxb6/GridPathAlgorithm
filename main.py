@@ -1,8 +1,6 @@
 import string
-
 import numpy as np
 import random
-
 
 # class for grid element
 class GridElement:
@@ -23,7 +21,6 @@ class GridElement:
     def getLocationType(self):
         return self.locationType
 
-
 def createGridElement(number, edges):
     locationChoices = ["Q", "V", "P", "E"]
     # Q for quarantine, V for vaccine, P for playground, E for empty
@@ -32,11 +29,13 @@ def createGridElement(number, edges):
     return element
 
 print("\n======================================================================")
+#############   STEP 1
 print("Program Begins:")
 userRows = int(input("\nEnter amount of Rows? "))
 userColumns = int(input("Enter amount of Columns? "))
 
 print("========================================================================")
+#############   STEP 2
 print("Information of each cell:\n")
 edges = (list(string.ascii_letters))  # list of alphabetical edges (lowercase then uppercase)
 gridSize = userRows * userColumns
@@ -53,6 +52,7 @@ for i in range(1, gridSize + 1):  # iterate over all items in grid
     k = k + 4
 
 print("=========================================================================")
+#############   STEP 3
 print("Generated Map:\n")
 genMap = []
 for i in range(0, len(gridList)):
@@ -60,14 +60,11 @@ for i in range(0, len(gridList)):
 
 counter = 0
 for j in range(0,len(gridList)):
-    print(genMap[j], " ", end= '')
+    print("| ", genMap[j], " |", end= '')
     counter += 1
     if(counter == userColumns):
         print(" ")
         counter =0
-    
-
-
 
 '''
 genMap = [["|   |" for a in range(userColumns)] 
@@ -87,5 +84,12 @@ for i in map:
 '''
 
 print("\n=======================================================================")
-#selectedRow = int(input(print("Enter the row of starting point/state: ")))
-#selectedCol= int(input(print("Enter the column of starting point/state: ")))
+#############   STEP 4
+startCell = int(input("\nEnter the number of the cell that is the starting point/state: "))
+print("You have selected the start state to be: ", genMap[startCell-1])
+goalCell = int(input("Enter the number of the cell that is the goal point/state: "))
+print("You have selected the goal state to be: ", genMap[goalCell-1])
+print("\nStarting State: ", genMap[startCell-1],"(Cell: ",startCell,")" "  ------->  Goal State: ", genMap[goalCell-1],"(Cell: ",goalCell,")")
+print("\n")
+
+
