@@ -31,16 +31,10 @@ def createGridElement(number, edges):
     element = GridElement(number, locationType, edges, "0")
     return element
 
-print("=================================================================")
+print("\n=================================================================")
 print("Program Begins:")
-userRows = int(input("\n\nEnter amount of Rows? "))
+userRows = int(input("\nEnter amount of Rows? "))
 userColumns = int(input("Enter amount of Columns? "))
-print("\n")
-print("=================================================================")
-
-print("Generated Map:\n")
-
-
 
 print("=================================================================")
 print("Information of each cell:\n")
@@ -57,3 +51,23 @@ for i in range(1, gridSize + 1):  # iterate over all items in grid
     l = l + 4  # increment to next 4 edge elements
     k = k + 4
 
+print("=================================================================")
+print("Generated Map:\n")
+map = [["|   |" for a in range(userColumns)] 
+    for b in range(userRows)]
+xCoord = userColumns
+yCoord = userRows
+for i in range(0,xCoord):
+    for j in range(0,yCoord):
+        map[i][j] = "|   |"
+#map[xCoord][yCoord] = "| A |"
+#print(map)
+for i in map:
+    #print("--- --- ---")
+    print(" ".join(i))
+    #print("--- --- ---")
+
+
+print("\n=================================================================")
+#selectedRow = int(input(print("Enter the row of starting point/state: ")))
+#selectedCol= int(input(print("Enter the column of starting point/state: ")))
