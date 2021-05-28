@@ -5,7 +5,7 @@
 # Max Burah
 
 # Running Program:
-# 1. User enter the number of rowns and columns for the grid.
+# 1. User enters the number of rows and columns for the grid.
 # 2. View the generated map.
 # 3. View the information of each cell (location type, element number an associated edges).
 # 4. User enters a starting point (start state) in the grid.
