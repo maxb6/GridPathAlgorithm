@@ -11,9 +11,9 @@ class GridElement:
         self.heuristic = heuristic
 
     def printElement(self):
-        print("Element Number:" + str(self.number) + "\n" +
+        print("Cell Number:" + str(self.number) + "\n" +
               "Location Type:" + self.locationType + "\n" +
-              "Element Edges:" + str(self.edges))
+              "Cell Edges:" + str(self.edges))
 
     def getNumber(self):
         return str(self.number)
@@ -29,13 +29,13 @@ def createGridElement(number, edges):
     return element
 
 print("\n======================================================================")
-#############   STEP 1
+#############   STEP 1 -- User inputs to make map
 print("Program Begins:")
 userRows = int(input("\nEnter amount of Rows? "))
 userColumns = int(input("Enter amount of Columns? "))
 
 print("========================================================================")
-#############   STEP 2
+#############   STEP 2 -- List all items in list with theyre appropriate edges
 print("Information of each cell:\n")
 edges = (list(string.ascii_letters))  # list of alphabetical edges (lowercase then uppercase)
 gridSize = userRows * userColumns
@@ -52,7 +52,7 @@ for i in range(1, gridSize + 1):  # iterate over all items in grid
     k = k + 4
 
 print("=========================================================================")
-#############   STEP 3
+#############   STEP 3 -- Visual of map locations
 print("Generated Map:\n")
 genMap = []
 for i in range(0, len(gridList)):
@@ -66,30 +66,32 @@ for j in range(0,len(gridList)):
         print(" ")
         counter =0
 
-'''
-genMap = [["|   |" for a in range(userColumns)] 
-    for b in range(userRows)]
-xCoord = userColumns
-yCoord = userRows
-for k in range(0, len(gridList)):
-    for i in range(0,xCoord):
-        for j in range(0,yCoord):
-            genMap[j][i] = "| "+gridList[k].locationType+" |"
-#map[xCoord][yCoord] = "| A |"
-#print(map)
-for i in map:
-    #print("--- --- ---")
-    print(" ".join(i))
-    #print("--- --- ---")
-'''
-
 print("\n=======================================================================")
-#############   STEP 4
-startCell = int(input("\nEnter the number of the cell that is the starting point/state: "))
-print("You have selected the start state to be: ", genMap[startCell-1])
-goalCell = int(input("Enter the number of the cell that is the goal point/state: "))
-print("You have selected the goal state to be: ", genMap[goalCell-1])
-print("\nStarting State: ", genMap[startCell-1],"(Cell: ",startCell,")" "  ------->  Goal State: ", genMap[goalCell-1],"(Cell: ",goalCell,")")
-print("\n")
+#############   STEP 4 --  User choosing the Role C or Role V and inputs start state
+print("Role C (Covid Patients)\nRole V (People Getting Vaccinated)\n")
+role = (input("Choose the Role C or the Role V: "))
+
+if(role == 'c' or role == 'C'):
+    startCell = int(input("\nEnter the number of the cell that is the starting point/state: "))
+    if(startCell <= gridSize):
+        print("You have selected the start state to be: ", genMap[startCell-1])
+    else:
+        startCell = int(input("Number out of range of grid: Enter the number of the cell that is the starting point/state: "))
+    goalCell = 'Q'
+elif(role == 'v' or role == 'V'):
+    startCell = int(input("\nEnter the number of the cell that is the starting point/state: "))
+    if(startCell <= gridSize):
+        print("You have selected the start state to be: ", genMap[startCell-1])
+    else:
+        startCell = int(input("Number out of range of grid: Enter the number of the cell that is the starting point/state: "))
+    goalCell = 'V'
+else:
+    print("Choose C or V")
+    role = string(input("Choose the Role C or the Role V:"))
+
+print("\nStarting State: ", genMap[startCell-1],"(Cell: ",startCell,")" "  ------->  Goal State: ", goalCell)
+
+print("\n=========================================================================")
+#############   STEP 5 -- Heuristic and A* Algorithms
 
 
