@@ -1,6 +1,9 @@
 import string
 import numpy as np
 import random
+from queue import PriorityQueue
+
+from numpy.core.fromnumeric import size
 
 
 # class for grid element
@@ -78,7 +81,7 @@ l = 0
 k = 4
 for i in range(0, len(gridList)):
     gridList[i].edges = [edgeList[i], edgeList[i + 1], edgeList[i + userColumns + 1], edgeList[i + userColumns + 2]]
-    gridList[i].printElement()
+    #gridList[i].printElement()
 
 counter = 0
 for j in range(0, len(gridList)):
@@ -349,4 +352,90 @@ for i in range(0, len(gridList)):
             gridList[i].cost[3] = 2
     gridList[i].printElement()
 
-#############   STEP 5 -- Heuristic and A* Algorithms
+print("\n=========================================================================")
+#############   STEP 6 -- Heuristic and A* Algorithms for Optimal Path
+print("Optimal Path:")
+optimalPath = PriorityQueue()
+
+for i in range(0,len(gridList)):
+    if role == 'c' or role == 'C':
+        optimalPath.put(gridList[startCell-1].locationType, 1)
+
+    if role == 'v' or role == 'V':
+        optimalPath.put(gridList[startCell-1].locationType, 1)
+
+print(optimalPath.queue)
+
+'''
+parents = []
+
+def search(start, target, graph, cost, parents):
+    nextNode = start
+
+    while nextNode != target:
+        for neighbor in graph[nextNode]:
+            if graph[nextNode][neighbor] + cost[nextNode] < cost[neighbor]:
+                cost[neighbor] = graph[nextNode][neighbor] + cost[nextNode]
+                parents[neighbor] = nextNode
+            del graph[neighbor][nextNode]
+        del cost[nextNode]
+        nextNode = min(cost, key=cost.get)
+    return parents
+
+result = search(startCell, goalCell, gridList, cost, parents)
+'''
+
+'''
+def searchOptimal(slist, start, goal):
+    visited = []
+    queue = [[start]]
+
+    if start == goal:
+        print("Already at the desired location.")
+        return
+    
+    while queue:
+        path = queue.pop(0)
+        node = path[-1]
+
+        if node not in visited:
+            neighb = list(node)
+
+            for i in neighb:
+                new_path = list(path)
+                new_path.append(i)
+                queue.append(new_path)
+
+                if i == goal:
+                    print("Path found = ", *new_path)
+                    return
+            visited.append(node)
+    
+    print("No path found.")
+    return
+
+searchOptimal(genMap,startCell,"Q")
+'''
+
+'''
+for i in range(0,len(gridList)):
+    if role == 'c' or role == 'C':
+        optimalPath.put(gridList[startCell-1].locationType, 1)
+        if gridList[startCell-1].neighbours[i] == "E":
+            optimalPath.put(gridList[startCell].locationType, 2)
+
+
+
+for i in range(optimalPath.qsize()):
+    print(optimalPath.get())
+
+'''
+
+'''
+optimalPath.put(1, gridList[startCell-1].cost[3])
+
+for i in range(optimalPath.qsize()):
+    print(optimalPath.get())
+'''
+
+
