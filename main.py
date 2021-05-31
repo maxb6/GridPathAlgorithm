@@ -366,6 +366,12 @@ for i in range(0,len(gridList)):
 
 print(optimalPath.queue)
 
+
+
+
+print("\n\nProgram Terminated.")
+print("\n=========================================================================")
+
 '''
 parents = []
 
