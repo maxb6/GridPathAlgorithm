@@ -94,29 +94,58 @@ for j in range(0, len(gridList)):
 print("\n=======================================================================")
 #############   STEP 4 --  User choosing the Role C or Role V and inputs start state
 print("Role C (Covid Patients)\nRole V (People Getting Vaccinated)\n")
-role = (input("Choose the Role C or the Role V: "))
+role = (input("Choose the Role C or the Role V by entering C or V: "))
+
+cellWidth = 0.1
+cellLength = 0.2
+
+gridWidth = cellWidth * userColumns
+gridLength = cellLength * userRows
+startCellx = 0
+startCelly = 0
+startRow = 0
+startColumn = 0
 
 if role == 'c' or role == 'C':
-    startCell = int(input("\nEnter the number of the cell that is the starting point/state: "))
-    if startCell <= gridSize:
-        print("You have selected the start state to be: ", genMap[startCell - 1])
-    else:
-        startCell = int(
-            input("Number out of range of grid: Enter the number of the cell that is the starting point/state: "))
-    goalCell = 'Q'
-elif role == 'v' or role == 'V':
-    startCell = int(input("\nEnter the number of the cell that is the starting point/state: "))
-    if startCell <= gridSize:
-        print("You have selected the start state to be: ", genMap[startCell - 1])
-    else:
-        startCell = int(
-            input("Number out of range of grid: Enter the number of the cell that is the starting point/state: "))
-    goalCell = 'V'
-else:
-    print("Choose C or V")
-    role = string(input("Choose the Role C or the Role V:"))
+    startCellx = float(input("\nEnter an x coordinate as the starting point/state (Choose between 0 and " + str(round(gridWidth,2)) + "): "))
+    startCelly = float(input("Enter a y coordinate as the starting point/state (Choose between 0 and " + str(round(gridLength,2)) + "): "))
 
-print("\nStarting State: ", genMap[startCell - 1], "(Cell: ", startCell, ")" "  ------->  Goal State: ", goalCell)
+    for i in range(1,userRows):
+        if (startCelly / cellLength) <= i:
+            startRow = i
+        if (startCelly / cellLength) > i:
+            startRow= i+1
+    print("\nStart state is in row: " + str(startRow))
+
+    for i in range(1,userColumns):
+        if (startCellx / cellWidth) <= i:
+            startColumn = i
+        if (startCellx / cellWidth) > i:
+            startColumn = i+1
+    print("Start state is in column: " + str(startColumn))
+    goalCell = 'Q'
+    
+if role == 'v' or role == 'V':
+    startCellx = float(input("\nEnter an x coordinate as the starting point/state (Choose between 0 and " + str(round(gridWidth,2)) + "): "))
+    startCelly = float(input("Enter a y coordinate as the starting point/state (Choose between 0 and " + str(round(gridLength,2)) + "): "))
+
+    for i in range(1,userRows):
+        if (startCelly / cellLength) <= i:
+            startRow = i
+        if (startCelly / cellLength) > i:
+            startRow= i+1
+    print("\nStart state is in row: " + str(startRow))
+
+    for i in range(1,userColumns):
+        if (startCellx / cellWidth) <= i:
+            startColumn = i
+        if (startCellx / cellWidth) > i:
+            startColumn = i+1
+    print("Start state is in column: " + str(startColumn))
+    goalCell = 'V'
+
+
+#print("\nStarting State: ", genMap[startCell - 1], "(Cell: ", startCell, ")" "  ------->  Goal State: ", goalCell)
 
 print("\n=========================================================================")
 
@@ -357,15 +386,18 @@ print("\n=======================================================================
 print("Optimal Path:")
 optimalPath = PriorityQueue()
 
+'''
 for i in range(0,len(gridList)):
     if role == 'c' or role == 'C':
         optimalPath.put(gridList[startCell-1].locationType, 1)
+        if gridList[startCell].locationType == 'E' and gridList[startCell].cost[i] < 3:
+            optimalPath.put(gridList[startCell].locationType, 2)
 
     if role == 'v' or role == 'V':
         optimalPath.put(gridList[startCell-1].locationType, 1)
 
 print(optimalPath.queue)
-
+'''
 
 
 
