@@ -450,6 +450,7 @@ for i in range(0, len(gridList)):
         hAmount += 1
 
     gridList[i].printElement()
+    print("Goodbye")
 
 
 def calHeuristic(element):
