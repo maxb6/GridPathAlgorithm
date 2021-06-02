@@ -110,6 +110,7 @@ cellLength = 0.2
 gridWidth = cellWidth * userColumns
 gridLength = cellLength * userRows
 
+# For role C
 if role == 'c' or role == 'C':
     #user input for x and y
     startCellxInput = float(input("\nEnter an x coordinate as the starting point/state (Choose between 0 and " + str(
@@ -163,6 +164,7 @@ if role == 'c' or role == 'C':
 
     print("\nStarting State: ", genMap[startCell - 1], "(Cell: ", startCell, ")   ------->  Goal State: Q ", "(Cell: ", goalState, ")")
 
+# For role V
 if role == 'v' or role == 'V':
     #user input for x and y
     startCellxInput = float(input("\nEnter an x coordinate as the starting point/state (Choose between 0 and " + str(
@@ -181,10 +183,41 @@ if role == 'v' or role == 'V':
     startCell = ((startRow-1)*userColumns) + startColumn
     print("Start State Cell Number: " + str(startCell))
 
-    startX = round((startColumn * 0.1), 2)
-    startY = round(((startRow - 1) * 0.2), 2)
+    startX = round(((startColumn - 1) * 0.1), 2)
+    startY = round((startRow  * 0.2), 2)
 
     print("Start Cell Coordinates: " + str(startX) + "," + str(startY))
+
+    goalStateList = []
+    goalXList = []
+    goalYList = []
+    distanceList = []
+    for j in range(0, len(gridList)):
+        if "V" in gridList[j].locationType:
+            goalStateList.append(gridList[j].number)
+
+    for i in range(0, len(goalStateList)):
+        goalStateRow = math.ceil(goalStateList[i] / userRows)
+        goalStateColumn = goalStateList[i] % userColumns
+        if goalStateColumn == 0:
+            goalStateColumn = userColumns
+        goalYList.append((goalStateRow * 0.2)) 
+        goalXList.append(((goalStateColumn-1) * 0.1))   
+
+    for i in range(0, len(goalStateList)):
+        distanceList.append(
+            math.sqrt((abs((goalXList[i] - startX)) ** 2) + (abs((goalYList[i] - startY)) ** 2)))
+
+    for p in range(0, len(distanceList)):
+        goalDistanceIndex = distanceList.index(min(distanceList))
+
+    goalState = goalStateList[goalDistanceIndex]
+    print("Goal State Cell Number: " + str(goalState))
+    goalStateX = goalXList[goalDistanceIndex]
+    goalStateY = goalYList[goalDistanceIndex]
+
+    print("\nStarting State: ", genMap[startCell - 1], "(Cell: ", startCell, ")   ------->  Goal State: V ", "(Cell: ", goalState, ")")
+
 
 #############   STEP 5 -- Cost
 
