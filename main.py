@@ -20,7 +20,7 @@ class GridElement:
     def printElement(self):
         print("Cell Number:" + str(self.number) + "\n" +
               "Location Type:" + self.locationType + "\n" +
-              "Edges:" + str(self.edges) + "\n" +
+              "Nodes:" + str(self.edges) + "\n" +
               "Cell Neighbours:" + str(self.neighbours) + "\n" +
               "Edge Costs:" + str(self.cost))
 
@@ -79,9 +79,17 @@ for i in range(0, len(gridList)):
 edgeList = (list(string.ascii_letters))  # list of alphabetical edges (lowercase then uppercase)
 l = 0
 k = 4
+rc = 0
 for i in range(0, len(gridList)):
-    gridList[i].edges = [edgeList[i], edgeList[i + 1], edgeList[i + userColumns + 1], edgeList[i + userColumns + 2]]
-    #gridList[i].printElement()
+    if gridList[i].number % userColumns == 1 and gridList[i].number != 1:
+        gridList[i].edges = [edgeList[rc + 1], edgeList[rc + 2], edgeList[rc + userColumns + 2],
+                             edgeList[rc + userColumns + 3]]
+        rc += 2
+    else:
+        gridList[i].edges = [edgeList[rc], edgeList[rc + 1], edgeList[rc + userColumns + 1],
+                             edgeList[rc + userColumns + 2]]
+        rc += 1
+    gridList[i].printElement()
 
 counter = 0
 for j in range(0, len(gridList)):
@@ -107,45 +115,48 @@ startRow = 0
 startColumn = 0
 
 if role == 'c' or role == 'C':
-    startCellx = float(input("\nEnter an x coordinate as the starting point/state (Choose between 0 and " + str(round(gridWidth,2)) + "): "))
-    startCelly = float(input("Enter a y coordinate as the starting point/state (Choose between 0 and " + str(round(gridLength,2)) + "): "))
+    startCellx = float(input("\nEnter an x coordinate as the starting point/state (Choose between 0 and " + str(
+        round(gridWidth, 2)) + "): "))
+    startCelly = float(input(
+        "Enter a y coordinate as the starting point/state (Choose between 0 and " + str(round(gridLength, 2)) + "): "))
 
-    for i in range(1,userRows):
+    for i in range(1, userRows):
         if (startCelly / cellLength) <= i:
             startRow = i
         if (startCelly / cellLength) > i:
-            startRow= i+1
+            startRow = i + 1
     print("\nStart state is in row: " + str(startRow))
 
-    for i in range(1,userColumns):
+    for i in range(1, userColumns):
         if (startCellx / cellWidth) <= i:
             startColumn = i
         if (startCellx / cellWidth) > i:
-            startColumn = i+1
+            startColumn = i + 1
     print("Start state is in column: " + str(startColumn))
     goalCell = 'Q'
-    
-if role == 'v' or role == 'V':
-    startCellx = float(input("\nEnter an x coordinate as the starting point/state (Choose between 0 and " + str(round(gridWidth,2)) + "): "))
-    startCelly = float(input("Enter a y coordinate as the starting point/state (Choose between 0 and " + str(round(gridLength,2)) + "): "))
 
-    for i in range(1,userRows):
+if role == 'v' or role == 'V':
+    startCellx = float(input("\nEnter an x coordinate as the starting point/state (Choose between 0 and " + str(
+        round(gridWidth, 2)) + "): "))
+    startCelly = float(input(
+        "Enter a y coordinate as the starting point/state (Choose between 0 and " + str(round(gridLength, 2)) + "): "))
+
+    for i in range(1, userRows):
         if (startCelly / cellLength) <= i:
             startRow = i
         if (startCelly / cellLength) > i:
-            startRow= i+1
+            startRow = i + 1
     print("\nStart state is in row: " + str(startRow))
 
-    for i in range(1,userColumns):
+    for i in range(1, userColumns):
         if (startCellx / cellWidth) <= i:
             startColumn = i
         if (startCellx / cellWidth) > i:
-            startColumn = i+1
+            startColumn = i + 1
     print("Start state is in column: " + str(startColumn))
     goalCell = 'V'
 
-
-#print("\nStarting State: ", genMap[startCell - 1], "(Cell: ", startCell, ")" "  ------->  Goal State: ", goalCell)
+# print("\nStarting State: ", genMap[startCell - 1], "(Cell: ", startCell, ")" "  ------->  Goal State: ", goalCell)
 
 print("\n=========================================================================")
 
@@ -399,8 +410,6 @@ for i in range(0,len(gridList)):
 print(optimalPath.queue)
 '''
 
-
-
 print("\n\nProgram Terminated.")
 print("\n=========================================================================")
 
@@ -475,5 +484,3 @@ optimalPath.put(1, gridList[startCell-1].cost[3])
 for i in range(optimalPath.qsize()):
     print(optimalPath.get())
 '''
-
-
