@@ -1,3 +1,4 @@
+import math
 import string
 import numpy as np
 import random
@@ -22,7 +23,8 @@ class GridElement:
               "Location Type:" + self.locationType + "\n" +
               "Nodes:" + str(self.edges) + "\n" +
               "Cell Neighbours:" + str(self.neighbours) + "\n" +
-              "Edge Costs:" + str(self.cost))
+              "Edge Costs:" + str(self.cost) + "\n" +
+              "Heuristic Amount:" + str(self.heuristic))
 
     def getNumber(self):
         return str(self.number)
@@ -55,10 +57,10 @@ gridList = []
 for i in range(1, gridSize + 1):  # iterate over all items in grid
     e = createGridElement(i)
     gridList.append(e)
+    '''
     e.printElement()
     print("_________________________")
-    l = 0
-    k = 4
+    '''
 
 print("=========================================================================")
 #############   STEP 3 -- Visual of map locations
@@ -77,8 +79,7 @@ for i in range(0, len(gridList)):
         genMap.append(gridList[i].locationType)
 
 edgeList = (list(string.ascii_letters))  # list of alphabetical edges (lowercase then uppercase)
-l = 0
-k = 4
+
 rc = 0
 for i in range(0, len(gridList)):
     if gridList[i].number % userColumns == 1 and gridList[i].number != 1:
@@ -89,7 +90,6 @@ for i in range(0, len(gridList)):
         gridList[i].edges = [edgeList[rc], edgeList[rc + 1], edgeList[rc + userColumns + 1],
                              edgeList[rc + userColumns + 2]]
         rc += 1
-    gridList[i].printElement()
 
 counter = 0
 for j in range(0, len(gridList)):
@@ -109,31 +109,58 @@ cellLength = 0.2
 
 gridWidth = cellWidth * userColumns
 gridLength = cellLength * userRows
-startCellx = 0
-startCelly = 0
-startRow = 0
-startColumn = 0
+
+
+def startElement(rows, columns):
+    startCell = (rows * 2 + columns)
+    return gridList[startCell].locationType
+
 
 if role == 'c' or role == 'C':
-    startCellx = float(input("\nEnter an x coordinate as the starting point/state (Choose between 0 and " + str(
+    startCellxInput = float(input("\nEnter an x coordinate as the starting point/state (Choose between 0 and " + str(
         round(gridWidth, 2)) + "): "))
-    startCelly = float(input(
+    startCellyInput = float(input(
         "Enter a y coordinate as the starting point/state (Choose between 0 and " + str(round(gridLength, 2)) + "): "))
 
-    for i in range(1, userRows):
-        if (startCelly / cellLength) <= i:
-            startRow = i
-        if (startCelly / cellLength) > i:
-            startRow = i + 1
-    print("\nStart state is in row: " + str(startRow))
-
-    for i in range(1, userColumns):
-        if (startCellx / cellWidth) <= i:
-            startColumn = i
-        if (startCellx / cellWidth) > i:
-            startColumn = i + 1
+    startRow = (math.floor(startCellyInput / cellLength)) + 1
+    print("Start state is in row: " + str(startRow))
+    startColumn = (math.floor(startCellxInput / cellWidth)) + 1
     print("Start state is in column: " + str(startColumn))
-    goalCell = 'Q'
+
+    print(startElement(startRow, startColumn))
+
+    startX = round((startColumn * 0.1), 2)
+    startY = round(((startRow - 1) * 0.2), 2)
+
+    print("Start Cell Coordinates: " + str(startX) + "," + str(startY))
+
+    goalStateList = []
+    goalXList = []
+    goalYList = []
+    distanceList = []
+    for j in range(0, len(gridList)):
+        if "Q" in gridList[j].locationType:
+            goalStateList.append(gridList[j].number)
+
+    for i in range(0, len(goalStateList)):
+        goalStateRow = math.ceil(goalStateList[i] / userRows)
+        goalStateColumn = goalStateList[i] % userColumns
+        if goalStateColumn == 0:
+            goalStateColumn = userColumns
+        goalYList.append((goalStateRow - 1) * 0.2)
+        goalXList.append(goalStateColumn * 0.1)
+
+    for i in range(0, len(goalStateList)):
+        distanceList.append(
+            math.sqrt((abs((goalXList[i] - startX)) ** 2) + (abs((goalYList[i] - startY)) ** 2)))
+
+    for p in range(0, len(distanceList)):
+        goalDistanceIndex = distanceList.index(min(distanceList))
+
+    goalState = goalStateList[goalDistanceIndex]
+    print("Goal State Cell Number: " + str(goalState))
+    goalStateX = goalXList[goalDistanceIndex]
+    goalStateY = goalYList[goalDistanceIndex]
 
 if role == 'v' or role == 'V':
     startCellx = float(input("\nEnter an x coordinate as the starting point/state (Choose between 0 and " + str(
@@ -141,24 +168,12 @@ if role == 'v' or role == 'V':
     startCelly = float(input(
         "Enter a y coordinate as the starting point/state (Choose between 0 and " + str(round(gridLength, 2)) + "): "))
 
-    for i in range(1, userRows):
-        if (startCelly / cellLength) <= i:
-            startRow = i
-        if (startCelly / cellLength) > i:
-            startRow = i + 1
-    print("\nStart state is in row: " + str(startRow))
-
-    for i in range(1, userColumns):
-        if (startCellx / cellWidth) <= i:
-            startColumn = i
-        if (startCellx / cellWidth) > i:
-            startColumn = i + 1
-    print("Start state is in column: " + str(startColumn))
-    goalCell = 'V'
+    startRow = math.floor(startCelly / cellLength)
+    print("Start state is in row: " + str(startRow + 1))
+    startColumn = math.floor(startCellx / cellWidth)
+    print("Start state is in column: " + str(startColumn + 1))
 
 # print("\nStarting State: ", genMap[startCell - 1], "(Cell: ", startCell, ")" "  ------->  Goal State: ", goalCell)
-
-print("\n=========================================================================")
 
 #############   STEP 5 -- Cost
 
@@ -390,97 +405,52 @@ for i in range(0, len(gridList)):
             gridList[i].cost[3] = 1.5
         if gridList[i].locationType == "P":
             gridList[i].cost[3] = 2
+
+print("\n=========================================================================")
+
+#############   STEP 6 -- Heuristic and A* Algorithms for Optimal Path
+for l in range(0, len(gridList)):
+    gridList[l].heuristic = [-1, -1, -1, -1]  # left,top,right,bottom
+for i in range(0, len(gridList)):
+    # get row and column for current gridList element
+    currentRow = math.ceil(gridList[i].number / userRows)
+    currentColumn = gridList[i].number % userColumns
+    if currentColumn == 0:
+        currentColumn = userColumns
+    # get x and y coordinate for current element
+    topRightX = round((currentColumn * 0.1), 2)
+    topRightY = round(((currentRow - 1) * 0.2), 2)
+
+    topLeftX = round(((currentColumn - 1) * 0.1), 2)
+    topLeftY = topRightY
+
+    bottomRightX = topRightX
+    bottomRightY = round((currentRow * 0.2), 2)
+
+    bottomLeftX = topLeftX
+    bottomLeftY = bottomRightY
+
+    # get distance to goal state
+    topRightDistance = math.sqrt((abs((goalStateX - topRightX)) ** 2) + (abs((goalStateY - topRightY)) ** 2))
+    topLeftDistance = math.sqrt((abs((goalStateX - topLeftX)) ** 2) + (abs((goalStateY - topLeftY)) ** 2))
+    bottomRightDistance = math.sqrt((abs((goalStateX - bottomRightX)) ** 2) + (abs((goalStateY - bottomRightY)) ** 2))
+    bottomLeftDistance = math.sqrt((abs((goalStateX - bottomLeftX)) ** 2) + (abs((goalStateY - bottomLeftY)) ** 2))
+    '''
+    print("TopLeft: " + str(topLeftDistance) +"TopRight: " + str(topRightDistance) + ",BottomRight: " + str(
+        bottomRightDistance) + ",BottomLeft: " + str(bottomLeftDistance) + " for number: " + str(gridList[i].number))
+    '''
+    # rate Distances for heuristic
+    heuristicDistanceList = [topLeftDistance, topRightDistance, bottomRightDistance,
+                             bottomLeftDistance]  # topleft,topright,bottomright,bottomleft
+    hAmount = 0
+    for p in range(0, len(heuristicDistanceList)):
+        heuristicIndex = heuristicDistanceList.index(min(heuristicDistanceList))
+        heuristicDistanceList[heuristicIndex] = 100
+        gridList[i].heuristic[heuristicIndex] = hAmount
+        hAmount += 1
+
     gridList[i].printElement()
 
-print("\n=========================================================================")
-#############   STEP 6 -- Heuristic and A* Algorithms for Optimal Path
-print("Optimal Path:")
-optimalPath = PriorityQueue()
-
-'''
-for i in range(0,len(gridList)):
-    if role == 'c' or role == 'C':
-        optimalPath.put(gridList[startCell-1].locationType, 1)
-        if gridList[startCell].locationType == 'E' and gridList[startCell].cost[i] < 3:
-            optimalPath.put(gridList[startCell].locationType, 2)
-
-    if role == 'v' or role == 'V':
-        optimalPath.put(gridList[startCell-1].locationType, 1)
-
-print(optimalPath.queue)
-'''
-
-print("\n\nProgram Terminated.")
-print("\n=========================================================================")
-
-'''
-parents = []
-
-def search(start, target, graph, cost, parents):
-    nextNode = start
-
-    while nextNode != target:
-        for neighbor in graph[nextNode]:
-            if graph[nextNode][neighbor] + cost[nextNode] < cost[neighbor]:
-                cost[neighbor] = graph[nextNode][neighbor] + cost[nextNode]
-                parents[neighbor] = nextNode
-            del graph[neighbor][nextNode]
-        del cost[nextNode]
-        nextNode = min(cost, key=cost.get)
-    return parents
-
-result = search(startCell, goalCell, gridList, cost, parents)
-'''
-
-'''
-def searchOptimal(slist, start, goal):
-    visited = []
-    queue = [[start]]
-
-    if start == goal:
-        print("Already at the desired location.")
-        return
-    
-    while queue:
-        path = queue.pop(0)
-        node = path[-1]
-
-        if node not in visited:
-            neighb = list(node)
-
-            for i in neighb:
-                new_path = list(path)
-                new_path.append(i)
-                queue.append(new_path)
-
-                if i == goal:
-                    print("Path found = ", *new_path)
-                    return
-            visited.append(node)
-    
-    print("No path found.")
-    return
-
-searchOptimal(genMap,startCell,"Q")
-'''
-
-'''
-for i in range(0,len(gridList)):
-    if role == 'c' or role == 'C':
-        optimalPath.put(gridList[startCell-1].locationType, 1)
-        if gridList[startCell-1].neighbours[i] == "E":
-            optimalPath.put(gridList[startCell].locationType, 2)
-
-
-
-for i in range(optimalPath.qsize()):
-    print(optimalPath.get())
-
-'''
-
-'''
-optimalPath.put(1, gridList[startCell-1].cost[3])
-
-for i in range(optimalPath.qsize()):
-    print(optimalPath.get())
-'''
+def calHeuristic(element):
+    print("Optimal Path:")
+    optimalPath = PriorityQueue()
