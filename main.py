@@ -112,8 +112,9 @@ gridLength = cellLength * userRows
 
 
 def startElement(rows, columns):
-    startCell = (rows * 2 + columns)
+    startCell = (((rows) * 2) + (columns)) 
     return gridList[startCell].locationType
+
 
 
 if role == 'c' or role == 'C':
@@ -127,7 +128,12 @@ if role == 'c' or role == 'C':
     startColumn = (math.floor(startCellxInput / cellWidth)) + 1
     print("Start state is in column: " + str(startColumn))
 
-    print(startElement(startRow, startColumn))
+
+
+    startCell = ((startRow-1)*userColumns) + startColumn
+    print("Start State Cell Number: " + str(startCell))
+    #print(startElement(startRow, startColumn))
+
 
     startX = round((startColumn * 0.1), 2)
     startY = round(((startRow - 1) * 0.2), 2)
@@ -173,7 +179,7 @@ if role == 'v' or role == 'V':
     startColumn = math.floor(startCellx / cellWidth)
     print("Start state is in column: " + str(startColumn + 1))
 
-# print("\nStarting State: ", genMap[startCell - 1], "(Cell: ", startCell, ")" "  ------->  Goal State: ", goalCell)
+print("\nStarting State: ", genMap[startCell - 1], "(Cell: ", startCell, ")   ------->  Goal State: Q ", "(Cell: ", goalState, ")")
 
 #############   STEP 5 -- Cost
 
