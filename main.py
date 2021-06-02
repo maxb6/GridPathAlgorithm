@@ -162,6 +162,8 @@ if role == 'c' or role == 'C':
     goalStateX = goalXList[goalDistanceIndex]
     goalStateY = goalYList[goalDistanceIndex]
 
+    print("Goal Cell Coordinates: " + str(goalStateX) + "," + str(goalStateY))
+
     print("\nStarting State: ", genMap[startCell - 1], "(Cell: ", startCell, ")   ------->  Goal State: Q ", "(Cell: ", goalState, ")")
 
 # For role V
@@ -495,6 +497,9 @@ for i in range(0, len(gridList)):
 
     gridList[i].printElement()
 
-def calHeuristic(element):
+def aAlgorithm(element):
+
+
+
     print("Optimal Path:")
     optimalPath = PriorityQueue()
