@@ -453,6 +453,7 @@ for i in range(0, len(gridList)):
     print("Goodbye")
 
 
+
 def calHeuristic(element):
     print("Optimal Path:")
     optimalPath = PriorityQueue()
