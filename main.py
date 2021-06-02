@@ -47,9 +47,9 @@ print("Program Begins:")
 userRows = int(input("\nEnter amount of Rows? "))
 userColumns = int(input("Enter amount of Columns? "))
 
-print("========================================================================")
+#print("========================================================================")
 #############   STEP 2 -- List all items in list with theyre appropriate edges
-print("Information of each cell:\n")
+#print("Information of each cell:\n")
 gridSize = userRows * userColumns
 l = 0
 k = 4
@@ -110,30 +110,23 @@ cellLength = 0.2
 gridWidth = cellWidth * userColumns
 gridLength = cellLength * userRows
 
-
-def startElement(rows, columns):
-    startCell = (((rows) * 2) + (columns)) 
-    return gridList[startCell].locationType
-
-
-
 if role == 'c' or role == 'C':
+    #user input for x and y
     startCellxInput = float(input("\nEnter an x coordinate as the starting point/state (Choose between 0 and " + str(
         round(gridWidth, 2)) + "): "))
     startCellyInput = float(input(
         "Enter a y coordinate as the starting point/state (Choose between 0 and " + str(round(gridLength, 2)) + "): "))
 
+    #finding the row and column obased on the user input
     startRow = (math.floor(startCellyInput / cellLength)) + 1
     print("Start state is in row: " + str(startRow))
     startColumn = (math.floor(startCellxInput / cellWidth)) + 1
     print("Start state is in column: " + str(startColumn))
 
 
-
+    #finding the start cell number based on the row and column
     startCell = ((startRow-1)*userColumns) + startColumn
     print("Start State Cell Number: " + str(startCell))
-    #print(startElement(startRow, startColumn))
-
 
     startX = round((startColumn * 0.1), 2)
     startY = round(((startRow - 1) * 0.2), 2)
@@ -168,18 +161,30 @@ if role == 'c' or role == 'C':
     goalStateX = goalXList[goalDistanceIndex]
     goalStateY = goalYList[goalDistanceIndex]
 
+    print("\nStarting State: ", genMap[startCell - 1], "(Cell: ", startCell, ")   ------->  Goal State: Q ", "(Cell: ", goalState, ")")
+
 if role == 'v' or role == 'V':
-    startCellx = float(input("\nEnter an x coordinate as the starting point/state (Choose between 0 and " + str(
+    #user input for x and y
+    startCellxInput = float(input("\nEnter an x coordinate as the starting point/state (Choose between 0 and " + str(
         round(gridWidth, 2)) + "): "))
-    startCelly = float(input(
+    startCellyInput = float(input(
         "Enter a y coordinate as the starting point/state (Choose between 0 and " + str(round(gridLength, 2)) + "): "))
 
-    startRow = math.floor(startCelly / cellLength)
-    print("Start state is in row: " + str(startRow + 1))
-    startColumn = math.floor(startCellx / cellWidth)
-    print("Start state is in column: " + str(startColumn + 1))
+    #finding the row and column obased on the user input
+    startRow = (math.floor(startCellyInput / cellLength)) + 1
+    print("Start state is in row: " + str(startRow))
+    startColumn = (math.floor(startCellxInput / cellWidth)) + 1
+    print("Start state is in column: " + str(startColumn))
 
-print("\nStarting State: ", genMap[startCell - 1], "(Cell: ", startCell, ")   ------->  Goal State: Q ", "(Cell: ", goalState, ")")
+
+    #finding the start cell number based on the row and column
+    startCell = ((startRow-1)*userColumns) + startColumn
+    print("Start State Cell Number: " + str(startCell))
+
+    startX = round((startColumn * 0.1), 2)
+    startY = round(((startRow - 1) * 0.2), 2)
+
+    print("Start Cell Coordinates: " + str(startX) + "," + str(startY))
 
 #############   STEP 5 -- Cost
 
