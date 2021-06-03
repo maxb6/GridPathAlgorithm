@@ -27,14 +27,28 @@ class GridElement:
               "Edge Costs:" + str(self.cost) + "\n" +
               "Heuristic Amount:" + str(self.heuristic))
 
-    def setAlgorithm(self):
-        self.algorithm = self.cost
-
     def getNumber(self):
         return str(self.number)
 
     def getLocationType(self):
         return self.locationType
+
+
+class Node:
+    def __init__(self, number, letter, neighbours, moveCost, heuristicCost, algorithmCost):
+        self.number = number
+        self.letter = letter
+        self.neighbours = neighbours  # left,up,right,down
+        self.moveCost = moveCost  # left,up,right,down
+        self.heuristic = heuristicCost  # left,up,right,down
+        self.algorithmCost = algorithmCost  # left,up,right,down
+
+    def printElement(self):
+        print("Node Number:" + str(self.number) + "\n" +
+              "Neighbours:" + str(self.neighbours) + "\n" +
+              "Edge Costs:" + str(self.moveCost) + "\n" +
+              "Heuristic Costs:" + str(self.heuristicCost) + "\n"
+              + "Algorithm Costs:" + str(self.moveCost))
 
 
 def createGridElement(number):
@@ -102,6 +116,14 @@ for j in range(0, len(gridList)):
     if counter == userColumns:
         print(" ")
         counter = 0
+
+nodeAmount = (userColumns * userRows) + (userColumns + userRows + 1)
+
+
+def createNodeElement():
+    for m in range(0, nodeAmount - 1):
+        nodeElement = Node(m, [], [], [], [])
+
 
 print("\n=======================================================================")
 #############   STEP 4 --  User choosing the Role C or Role V and inputs start state
@@ -549,7 +571,6 @@ nodeListIndex = nodeList.index(startingNode)
 
 
 def traverseGrid(currentCellNumber):
-
     currentNodeList = []
     for k in range(0, 3):
         currentNodeList.append(gridList[currentCellNumber].nodes[k])
@@ -704,7 +725,7 @@ def traverseGrid(currentCellNumber):
     openList.append(nodeLeft + "," + nodeUp + "," + nodeRight + "," + nodeDown)
     nextNodeIndex = algorithmCost.index(min(algorithmCost))
     goalStateNode = gridList[goalState - 1].nodes[1]
-    print("gsNode: "+goalStateNode)
+    print("gsNode: " + goalStateNode)
     # if 0 left
     if nextNodeIndex == 0:
         visitedState.append(nodeLeft)
@@ -712,7 +733,7 @@ def traverseGrid(currentCellNumber):
         print("Open List: " + str(openList))
         if goalStateNode == nodeLeft:
             return
-        traverseGrid(nodeLeftElement-1)
+        traverseGrid(nodeLeftElement - 1)
 
     if nextNodeIndex == 1:
         visitedState.append(nodeUp)
@@ -720,7 +741,7 @@ def traverseGrid(currentCellNumber):
         print("Open List: " + str(openList))
         if goalStateNode == nodeUp:
             return
-        traverseGrid(nodeUpElement-1)
+        traverseGrid(nodeUpElement - 1)
 
     if nextNodeIndex == 2:
         visitedState.append(nodeRight)
@@ -728,7 +749,7 @@ def traverseGrid(currentCellNumber):
         print("Open List: " + str(openList))
         if goalStateNode == nodeRight:
             return
-        traverseGrid(nodeRightElement-1)
+        traverseGrid(nodeRightElement - 1)
 
     if nextNodeIndex == 3:
         visitedState.append(nodeDown)
@@ -737,7 +758,6 @@ def traverseGrid(currentCellNumber):
         if goalStateNode == nodeDown:
             return
         traverseGrid(nodeDownElement)
-
 
 
 # find value of left node
