@@ -1,14 +1,14 @@
 ## COMP472 - Assignment1
 
 ### Programmed by:
-#### Constantine Karellas - 40109253
-#### Max Burah - 40077075
+#### - Constantine Karellas - 40109253
+#### - Max Burah - 40077075
 
 ### Libraries Used:
-#### 1. math
-#### 2. numpy
-#### 3. random
-#### 4. PriorityQueue
+#### - math
+#### - numpy
+#### - random
+#### - PriorityQueue
 
 ### Instructions on Running Program:
 #### 1. User enters the number of rows and columns for the grid.
