@@ -62,6 +62,7 @@ def createGridElement(number):
 print("\n======================================================================")
 #############   STEP 1 -- User inputs to make map
 print("Program Begins:")
+print(np.inf)
 userRows = int(input("\nEnter amount of Rows? "))
 userColumns = int(input("Enter amount of Columns? "))
 
@@ -138,6 +139,10 @@ gridLength = cellLength * userRows
 
 # For role C
 if role == 'c' or role == 'C':
+    exists = 'Q' in genMap
+    if(exists ==  False):
+        print("\nNo path found because there in so Q in map.\nRun program again.\n")
+        exit()
     # user input for x and y
     startCellxInput = float(input("\nEnter an x coordinate as the starting point/state (Choose between 0 and " + str(
         round(gridWidth, 2)) + "): "))
@@ -194,6 +199,10 @@ if role == 'c' or role == 'C':
 
 # For role P
 if role == 'p' or role == 'P':
+    exists = 'P' in genMap
+    if(exists ==  False):
+        print("\nNo path found because there in so P in map.\nRun program again.\n")
+        exit()
     # user input for x and y
     startCellxInput = float(input("\nEnter an x coordinate as the starting point/state (Choose between 0 and " + str(
         round(gridWidth, 2)) + "): "))
@@ -243,7 +252,7 @@ if role == 'p' or role == 'P':
     goalStateX = goalXList[goalDistanceIndex]
     goalStateY = goalYList[goalDistanceIndex]
 
-    print("\nStarting State: ", genMap[startCell - 1], "(Cell: ", startCell, ")   ------->  Goal State: V ", "(Cell: ",
+    print("\nStarting State: ", genMap[startCell - 1], "(Cell: ", startCell, ")   ------->  Goal State: P ", "(Cell: ",
           goalState, ")")
 
 #############   STEP 5 -- Cost
@@ -772,3 +781,200 @@ traverseGrid(currentCell)
 def aAlgorithm(element):
     print("Optimal Path:")
     optimalPath = PriorityQueue()
+
+
+
+# for role P: cost = (left,top,right,bottom)
+infinity = np.inf
+for i in range(0, len(gridList)):
+    # if there are no neighbours on the left
+    if gridList[i].neighbourLocations[0] == "0":
+        if gridList[i].locationType == "Q":
+            gridList[i].cost[0] = infinity
+        if gridList[i].locationType == "E":
+            gridList[i].cost[0] = 1
+        if gridList[i].locationType == "V":
+            gridList[i].cost[0] = 2
+        if gridList[i].locationType == "P":
+            gridList[i].cost[0] = 0
+    # if there are no neighbours on the top
+    if gridList[i].neighbourLocations[1] == "0":
+        if gridList[i].locationType == "Q":
+            gridList[i].cost[1] = infinity
+        if gridList[i].locationType == "E":
+            gridList[i].cost[1] = 1
+        if gridList[i].locationType == "V":
+            gridList[i].cost[1] = 2
+        if gridList[i].locationType == "P":
+            gridList[i].cost[1] = 0
+    # if there are no neighbours on the right
+    if gridList[i].neighbourLocations[2] == "0":
+        if gridList[i].locationType == "Q":
+            gridList[i].cost[2] = infinity
+        if gridList[i].locationType == "E":
+            gridList[i].cost[2] = 1
+        if gridList[i].locationType == "V":
+            gridList[i].cost[2] = 2
+        if gridList[i].locationType == "P":
+            gridList[i].cost[2] = 0
+    # if there are no neighbours on the bottom
+    if gridList[i].neighbourLocations[3] == "0":
+        if gridList[i].locationType == "Q":
+            gridList[i].cost[3] = infinity
+        if gridList[i].locationType == "E":
+            gridList[i].cost[3] = 1
+        if gridList[i].locationType == "V":
+            gridList[i].cost[3] = 2
+        if gridList[i].locationType == "P":
+            gridList[i].cost[3] = 0
+    ######### if there is a neighbour that is a quarantine place
+    if gridList[i].neighbourLocations[0] == "Q":
+        if gridList[i].locationType == "Q":
+            gridList[i].cost[0] = infinity
+        if gridList[i].locationType == "E":
+            gridList[i].cost[0] = infinity
+        if gridList[i].locationType == "V":
+            gridList[i].cost[0] = infinity
+        if gridList[i].locationType == "P":
+            gridList[i].cost[0] = infinity
+    if gridList[i].neighbourLocations[1] == "Q":
+        if gridList[i].locationType == "Q":
+            gridList[i].cost[1] = infinity
+        if gridList[i].locationType == "E":
+            gridList[i].cost[1] = infinity
+        if gridList[i].locationType == "V":
+            gridList[i].cost[1] = infinity
+        if gridList[i].locationType == "P":
+            gridList[i].cost[1] = infinity
+    if gridList[i].neighbourLocations[2] == "Q":
+        if gridList[i].locationType == "Q":
+            gridList[i].cost[2] = infinity
+        if gridList[i].locationType == "E":
+            gridList[i].cost[2] = infinity
+        if gridList[i].locationType == "V":
+            gridList[i].cost[2] = infinity
+        if gridList[i].locationType == "P":
+            gridList[i].cost[2] = infinity
+    if gridList[i].neighbourLocations[3] == "Q":
+        if gridList[i].locationType == "Q":
+            gridList[i].cost[3] = infinity
+        if gridList[i].locationType == "E":
+            gridList[i].cost[3] = infinity
+        if gridList[i].locationType == "V":
+            gridList[i].cost[3] = infinity
+        if gridList[i].locationType == "P":
+            gridList[i].cost[3] = infinity
+
+    ############## if there is a neighbour that is a vaccine place
+    if gridList[i].neighbourLocations[0] == "V":
+        if gridList[i].locationType == "Q":
+            gridList[i].cost[0] = infinity
+        if gridList[i].locationType == "E":
+            gridList[i].cost[0] = 1.5
+        if gridList[i].locationType == "V":
+            gridList[i].cost[0] = 2
+        if gridList[i].locationType == "P":
+            gridList[i].cost[0] = 1
+    if gridList[i].neighbourLocations[1] == "V":
+        if gridList[i].locationType == "Q":
+            gridList[i].cost[1] = infinity
+        if gridList[i].locationType == "E":
+            gridList[i].cost[1] = 1.5
+        if gridList[i].locationType == "V":
+            gridList[i].cost[1] = 2
+        if gridList[i].locationType == "P":
+            gridList[i].cost[1] = 1
+    if gridList[i].neighbourLocations[2] == "V":
+        if gridList[i].locationType == "Q":
+            gridList[i].cost[2] = infinity
+        if gridList[i].locationType == "E":
+            gridList[i].cost[2] = 1.5
+        if gridList[i].locationType == "V":
+            gridList[i].cost[2] = 2
+        if gridList[i].locationType == "P":
+            gridList[i].cost[2] = 1
+    if gridList[i].neighbourLocations[3] == "V":
+        if gridList[i].locationType == "Q":
+            gridList[i].cost[3] = infinity
+        if gridList[i].locationType == "E":
+            gridList[i].cost[3] = 1.5
+        if gridList[i].locationType == "V":
+            gridList[i].cost[3] = 2
+        if gridList[i].locationType == "P":
+            gridList[i].cost[3] = 1
+
+    ############## if there is a neighbour that is a playground
+    if gridList[i].neighbourLocations[0] == "P":
+        if gridList[i].locationType == "Q":
+            gridList[i].cost[0] = infinity
+        if gridList[i].locationType == "E":
+            gridList[i].cost[0] = 0.5
+        if gridList[i].locationType == "V":
+            gridList[i].cost[0] = 1
+        if gridList[i].locationType == "P":
+            gridList[i].cost[0] = 0
+    if gridList[i].neighbourLocations[1] == "P":
+        if gridList[i].locationType == "Q":
+            gridList[i].cost[1] = infinity
+        if gridList[i].locationType == "E":
+            gridList[i].cost[1] = 0.5
+        if gridList[i].locationType == "V":
+            gridList[i].cost[1] = 1
+        if gridList[i].locationType == "P":
+            gridList[i].cost[1] = 0
+    if gridList[i].neighbourLocations[2] == "P":
+        if gridList[i].locationType == "Q":
+            gridList[i].cost[2] = infinity
+        if gridList[i].locationType == "E":
+            gridList[i].cost[2] = 0.5
+        if gridList[i].locationType == "V":
+            gridList[i].cost[2] = 1
+        if gridList[i].locationType == "P":
+            gridList[i].cost[2] = 0
+    if gridList[i].neighbourLocations[3] == "P":
+        if gridList[i].locationType == "Q":
+            gridList[i].cost[3] = infinity
+        if gridList[i].locationType == "E":
+            gridList[i].cost[3] = 0.5
+        if gridList[i].locationType == "V":
+            gridList[i].cost[3] = 1
+        if gridList[i].locationType == "P":
+            gridList[i].cost[3] = 0
+
+        ############## if there is a neighbour that is EMPTY
+    if gridList[i].neighbourLocations[0] == "E":
+        if gridList[i].locationType == "Q":
+            gridList[i].cost[0] = infinity
+        if gridList[i].locationType == "E":
+            gridList[i].cost[0] = 1
+        if gridList[i].locationType == "V":
+            gridList[i].cost[0] = 1.5
+        if gridList[i].locationType == "P":
+            gridList[i].cost[0] = 0.5
+    if gridList[i].neighbourLocations[1] == "E":
+        if gridList[i].locationType == "Q":
+            gridList[i].cost[1] = infinity
+        if gridList[i].locationType == "E":
+            gridList[i].cost[1] = 1
+        if gridList[i].locationType == "V":
+            gridList[i].cost[1] = 1.5
+        if gridList[i].locationType == "P":
+            gridList[i].cost[1] = 0.5
+    if gridList[i].neighbourLocations[2] == "E":
+        if gridList[i].locationType == "Q":
+            gridList[i].cost[2] = infinity
+        if gridList[i].locationType == "E":
+            gridList[i].cost[2] = 1
+        if gridList[i].locationType == "V":
+            gridList[i].cost[2] = 1.5
+        if gridList[i].locationType == "P":
+            gridList[i].cost[2] = 0.5
+    if gridList[i].neighbourLocations[3] == "E":
+        if gridList[i].locationType == "Q":
+            gridList[i].cost[3] = infinity
+        if gridList[i].locationType == "E":
+            gridList[i].cost[3] = 1
+        if gridList[i].locationType == "V":
+            gridList[i].cost[3] = 1.5
+        if gridList[i].locationType == "P":
+            gridList[i].cost[3] = 0.5
