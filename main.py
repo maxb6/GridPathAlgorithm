@@ -127,8 +127,8 @@ def createNodeElement():
 
 print("\n=======================================================================")
 #############   STEP 4 --  User choosing the Role C or Role V and inputs start state
-print("Role C (Covid Patients)\nRole V (People Getting Vaccinated)\n")
-role = (input("Choose the Role C or the Role V by entering C or V: "))
+print("Role C (Covid Patients)\nRole P (Children Getting Vaccinated)\n")
+role = (input("Choose the Role C or the Role P by entering C or P: "))
 
 cellWidth = 0.1
 cellLength = 0.2
@@ -192,8 +192,8 @@ if role == 'c' or role == 'C':
     print("\nStarting State: ", genMap[startCell - 1], "(Cell: ", startCell, ")   ------->  Goal State: Q ", "(Cell: ",
           goalState, ")")
 
-# For role V
-if role == 'v' or role == 'V':
+# For role P
+if role == 'p' or role == 'P':
     # user input for x and y
     startCellxInput = float(input("\nEnter an x coordinate as the starting point/state (Choose between 0 and " + str(
         round(gridWidth, 2)) + "): "))
@@ -210,8 +210,8 @@ if role == 'v' or role == 'V':
     startCell = ((startRow - 1) * userColumns) + startColumn
     print("Start State Cell Number: " + str(startCell))
 
-    startX = round(((startColumn - 1) * 0.1), 2)
-    startY = round((startRow * 0.2), 2)
+    startX = startCellxInput
+    startY = startCellyInput
 
     print("Start Cell Coordinates: " + str(startX) + "," + str(startY))
 
@@ -220,7 +220,7 @@ if role == 'v' or role == 'V':
     goalYList = []
     distanceList = []
     for j in range(0, len(gridList)):
-        if "V" in gridList[j].locationType:
+        if "P" in gridList[j].locationType:
             goalStateList.append(gridList[j].number)
 
     for i in range(0, len(goalStateList)):
