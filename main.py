@@ -138,6 +138,10 @@ gridLength = cellLength * userRows
 
 # For role C
 if role == 'c' or role == 'C':
+    exists = 'Q' in genMap
+    if(exists ==  False):
+        print("No path found because there in so Q in map.\nRun program again.\n")
+        exit()
     # user input for x and y
     startCellxInput = float(input("\nEnter an x coordinate as the starting point/state (Choose between 0 and " + str(
         round(gridWidth, 2)) + "): "))
@@ -194,6 +198,10 @@ if role == 'c' or role == 'C':
 
 # For role P
 if role == 'p' or role == 'P':
+    exists = 'P' in genMap
+    if(exists ==  False):
+        print("No path found because there in so P in map.\nRun program again.\n")
+        exit()
     # user input for x and y
     startCellxInput = float(input("\nEnter an x coordinate as the starting point/state (Choose between 0 and " + str(
         round(gridWidth, 2)) + "): "))
@@ -243,7 +251,7 @@ if role == 'p' or role == 'P':
     goalStateX = goalXList[goalDistanceIndex]
     goalStateY = goalYList[goalDistanceIndex]
 
-    print("\nStarting State: ", genMap[startCell - 1], "(Cell: ", startCell, ")   ------->  Goal State: V ", "(Cell: ",
+    print("\nStarting State: ", genMap[startCell - 1], "(Cell: ", startCell, ")   ------->  Goal State: P ", "(Cell: ",
           goalState, ")")
 
 #############   STEP 5 -- Cost
