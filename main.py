@@ -1,3 +1,8 @@
+# COMP472 - Assignment 1
+# Programmed By:
+# Constantine Karellas - 40109253
+# Max Burah - 40077075
+
 import math
 import string
 import numpy as np
@@ -62,7 +67,6 @@ def createGridElement(number):
 print("\n======================================================================")
 #############   STEP 1 -- User inputs to make map
 print("Program Begins:")
-print(np.inf)
 userRows = int(input("\nEnter amount of Rows? "))
 userColumns = int(input("Enter amount of Columns? "))
 
