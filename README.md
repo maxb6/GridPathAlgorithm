@@ -8,7 +8,6 @@
 #### - math
 #### - numpy
 #### - random
-#### - PriorityQueue
 
 ### Instructions on Running Program:
 #### 1. User enters the number of rows and columns for the grid.
