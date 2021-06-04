@@ -853,6 +853,7 @@ def traverseGrid(currentGridNumber, nextNode):
             print("Visited state: " + str(visitedState))
             print("Goal state reached")
             return
+
         else:
             print("nextCellNumber: " + str(nextCellNumber))
             print("nextNodeDown: " + nodeDown)
