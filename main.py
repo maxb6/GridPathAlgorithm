@@ -45,11 +45,12 @@ class Node:
         self.letter = letter
         self.neighbours = neighbours  # left,up,right,down
         self.moveCost = moveCost  # left,up,right,down
-        self.heuristic = heuristicCost  # left,up,right,down
+        self.heuristicCost = heuristicCost  # left,up,right,down
         self.algorithmCost = algorithmCost  # left,up,right,down
 
     def printElement(self):
         print("Node Number:" + str(self.number) + "\n" +
+              "Node Letter:" + str(self.letter) + "\n" +
               "Neighbours:" + str(self.neighbours) + "\n" +
               "Edge Costs:" + str(self.moveCost) + "\n" +
               "Heuristic Costs:" + str(self.heuristicCost) + "\n"
@@ -101,17 +102,17 @@ for i in range(0, len(gridList)):
     else:
         genMap.append(gridList[i].locationType)
 
-nodeList = (list(string.ascii_letters))  # list of alphabetical edges (lowercase then uppercase)
+letterList = (list(string.ascii_letters))  # list of alphabetical edges (lowercase then uppercase)
 
 rc = 0
 for i in range(0, len(gridList)):
     if gridList[i].number % userColumns == 1 and gridList[i].number != 1:
-        gridList[i].nodes = [nodeList[rc + 1], nodeList[rc + 2], nodeList[rc + userColumns + 2],
-                             nodeList[rc + userColumns + 3]]
+        gridList[i].nodes = [letterList[rc + 1], letterList[rc + 2], letterList[rc + userColumns + 3],
+                             letterList[rc + userColumns + 2]]
         rc += 2
     else:
-        gridList[i].nodes = [nodeList[rc], nodeList[rc + 1], nodeList[rc + userColumns + 1],
-                             nodeList[rc + userColumns + 2]]
+        gridList[i].nodes = [letterList[rc], letterList[rc + 1], letterList[rc + userColumns + 2],
+                             letterList[rc + userColumns + 1]]
         rc += 1
 
 counter = 0
@@ -121,14 +122,61 @@ for j in range(0, len(gridList)):
     if counter == userColumns:
         print(" ")
         counter = 0
-
+'''
 nodeAmount = (userColumns * userRows) + (userColumns + userRows + 1)
 
+def createNodeElement(number):
+    nodeElement = Node(number, letterList[number], [], [], [], [])
+    return nodeElement
 
-def createNodeElement():
-    for m in range(0, nodeAmount - 1):
-        nodeElement = Node(m, [], [], [], [])
 
+nodeList = []
+for m in range(0, nodeAmount):
+    n = createNodeElement(m)
+    nodeList.append(n)
+
+# find neighboring nodes
+for i in range(len(nodeList)):
+    nodeList[i].moveCost = [0, 0, 0, 0]
+    nodeList[i].heuristicCost = [0, 0, 0, 0]
+    nodeList[i].algorithmCost = [0, 0, 0, 0]
+    if nodeList[i].number == 0:
+        nodeList[i].neighbours = [-1, -1, letterList[i + 1], letterList[i + userColumns + 1]]
+    elif nodeList[i].number == nodeAmount - 1:
+        nodeList[i].neighbours = [letterList[i - 1], letterList[i - userColumns - 1],
+                                  -1, -1]
+    elif nodeList[i].number > nodeAmount - userColumns:
+        nodeList[i].neighbours = [letterList[i - 1], letterList[i - userColumns - 1],
+                                  letterList[i + 1], -1]
+    else:
+        nodeList[i].neighbours = [letterList[i - 1], letterList[i - userColumns - 1],
+                                  letterList[i + 1], letterList[i + userColumns + 1]]
+for i in range(0, len(nodeList)):
+    # check if there are no left neighbours
+    if nodeList[i].number % (userColumns + 1) == 0:
+        nodeList[i].neighbours[0] = -1
+        nodeList[i].moveCost[0] = -1
+        nodeList[i].heuristicCost[0] = -1
+        nodeList[i].algorithmCost[0] = -1
+    # check if there are no upper neighbours
+    if nodeList[i].number <= userColumns:
+        nodeList[i].neighbours[1] = -1
+        nodeList[i].moveCost[1] = -1
+        nodeList[i].heuristicCost[1] = -1
+        nodeList[i].algorithmCost[1] = -1
+    # check if there are no right neighbours
+    if nodeList[i].number % (userColumns + 1) == 4:
+        nodeList[i].neighbours[2] = -1
+        nodeList[i].moveCost[2] = -1
+        nodeList[i].heuristicCost[2] = -1
+        nodeList[i].algorithmCost[2] = -1
+    # check if there are no bottom neighbours
+    if nodeList[i].number >= nodeAmount - userColumns - 1:
+        nodeList[i].neighbours[3] = -1
+        nodeList[i].moveCost[3] = -1
+        nodeList[i].heuristicCost[3] = -1
+        nodeList[i].algorithmCost[3] = -1
+'''
 
 print("\n=======================================================================")
 #############   STEP 4 --  User choosing the Role C or Role V and inputs start state
@@ -329,8 +377,6 @@ for i in range(0, len(gridList)):
     if gridList[i].number > gridSize - userColumns:
         gridList[i].neighbourLocations[3] = "0"
 
-    # gridList[i].printElement()
-
 # find cost for each grid Element dependent on what role is chosen
 # fill cost list with -1s as default
 for i in range(0, len(gridList)):
@@ -377,7 +423,7 @@ for i in range(0, len(gridList)):
             gridList[i].cost[3] = 2
         if gridList[i].locationType == "P":
             gridList[i].cost[3] = 3
-    ######### if there is a neighbour that is a quarantine place
+    # if there is a neighbour that is a quarantine place
     if gridList[i].neighbourLocations[0] == "Q":
         if gridList[i].locationType == "Q":
             gridList[i].cost[0] = 0
@@ -529,6 +575,18 @@ for i in range(0, len(gridList)):
         if gridList[i].locationType == "P":
             gridList[i].cost[3] = 2
 
+'''
+for i in range(len(nodeList)):
+    if i <= userColumns:
+        nodeList[i].moveCost = [gridList[i-1].cost[1], gridList[i - 1].cost[2], gridList[i].cost[1], gridList[i].cost[0]]
+    if userColumns < i <= userColumns*2:
+        nodeList[i].moveCost = [gridList[i - 2].cost[1], gridList[i - 2].cost[2], gridList[i-1].cost[1],
+                                gridList[i-1].cost[0]]
+    if userColumns*2 < i <= userColumns*3:
+        nodeList[i].moveCost = [gridList[i - 3].cost[1], gridList[i - 3].cost[2], gridList[i-2].cost[1],
+                                gridList[i-2].cost[0]]
+'''
+
 print("\n=========================================================================")
 
 #############   STEP 6 -- Heuristic and A* Algorithms for Optimal Path
@@ -572,10 +630,7 @@ for i in range(0, len(gridList)):
         gridList[i].heuristic[heuristicIndex] = hAmount
         hAmount += 1
 
-    gridList[i].printElement()
-
-startCell
-goalState
+    # gridList[i].printElement()
 
 openList = []
 closedList = []
@@ -584,210 +639,251 @@ visitedState = []
 optimalPath = []
 
 startingNode = gridList[startCell - 1].nodes[1]
-openList.append(startingNode)
-visitedState.append(startingNode)
-currentCell = startCell - 1
+currentNumber = startCell - 1
 currentNode = startingNode
-nodeListIndex = nodeList.index(startingNode)
+
+for i in range(len(gridList)):
+    gridList[i].printElement()
 
 
-def traverseGrid(currentCellNumber):
+def traverseGrid(currentGridNumber, nextNode):
+    visitedState.append(nextNode)
     currentNodeList = []
-    for k in range(0, 3):
-        currentNodeList.append(gridList[currentCellNumber].nodes[k])
-    currentNodeIndex = currentNodeList.index(currentNode)
+    for k in range(0, 4):
+        currentNodeList.append(gridList[currentGridNumber].nodes[k])
+    print("current node list: " + str(currentNodeList))
+    currentNodeIndex = currentNodeList.index(nextNode)
+    print("CurrentNodeIndex: " + str(currentNodeIndex))
+    nodeListIndex = letterList.index(nextNode)
 
     # if the current node is on the top left, takes from left and top neighbour
     # left movement cost comes from left neighbour, top movement cost comes from top neighbour
     if currentNodeIndex == 0:
-        if gridList[currentCellNumber].neighbours[0] == -1:
+        if gridList[currentGridNumber].neighbours[0] == -1:
             leftCost = 10
             leftHeuristic = 10
             nodeLeft = ""
             nodeLeftElement = ""
         else:
-            leftCost = gridList[(gridList[currentCellNumber].neighbours[0]) - 1].cost[1]
-            leftHeuristic = gridList[(gridList[currentCellNumber].neighbours[0]) - 1].heuristic[0]
-            nodeLeft = nodeList[nodeListIndex - 1]
-            nodeLeftElement = gridList[(gridList[currentCellNumber].neighbours[0]) - 1].number
-        if gridList[currentCellNumber].neighbours[1] == -1:
+            leftCost = gridList[(gridList[currentGridNumber].neighbours[0]) - 1].cost[1]
+            leftHeuristic = gridList[(gridList[currentGridNumber].neighbours[0]) - 1].heuristic[0]
+            nodeLeft = letterList[nodeListIndex - 1]
+            nodeLeftElement = gridList[(gridList[currentGridNumber].neighbours[0]) - 1].number
+        if gridList[currentGridNumber].neighbours[1] == -1:
             upCost = 10
             upHeuristic = 10
             nodeUp = ""
             nodeUpElement = ""
         else:
-            upCost = gridList[(gridList[currentCellNumber].neighbours[1]) - 1].cost[0]
-            upHeuristic = gridList[(gridList[currentCellNumber].neighbours[1]) - 1].heuristic[0]
-            nodeUp = nodeList[nodeListIndex - (userColumns + 1)]
-            nodeUpElement = gridList[(gridList[currentCellNumber].neighbours[1]) - 1].number
-        rightCost = gridList[currentCellNumber].cost[1]
-        rightHeuristic = gridList[currentCellNumber].heuristic[1]
-        nodeRight = nodeList[nodeListIndex + 1]
-        nodeRightElement = gridList[currentCellNumber].number
-        downCost = gridList[currentCellNumber].cost[0]
-        downHeuristic = gridList[currentCellNumber].heuristic[3]
-        nodeDown = nodeList[nodeListIndex + (userColumns + 1)]
-        nodeDownElement = gridList[currentCellNumber].number
+            upCost = gridList[(gridList[currentGridNumber].neighbours[1]) - 1].cost[0]
+            upHeuristic = gridList[(gridList[currentGridNumber].neighbours[1]) - 1].heuristic[0]
+            nodeUp = letterList[nodeListIndex - (userColumns + 1)]
+            nodeUpElement = gridList[(gridList[currentGridNumber].neighbours[1]) - 1].number
+        rightCost = gridList[currentGridNumber].cost[1]
+        rightHeuristic = gridList[currentGridNumber].heuristic[1]
+        nodeRight = letterList[nodeListIndex + 1]
+        nodeRightElement = gridList[currentGridNumber].number
+        downCost = gridList[currentGridNumber].cost[0]
+        downHeuristic = gridList[currentGridNumber].heuristic[3]
+        nodeDown = letterList[nodeListIndex + (userColumns + 1)]
+        nodeDownElement = gridList[currentGridNumber].number
         moveCost = [leftCost, upCost, rightCost, downCost]  # to move left,up,right,down
         heuristicCost = [leftHeuristic, upHeuristic, rightHeuristic, downHeuristic]
 
         algorithmCost = [leftCost + leftHeuristic, upCost + upHeuristic, rightCost + rightHeuristic,
                          downCost + downHeuristic]
+        nextElement = [nodeLeftElement, nodeUpElement, nodeRightElement, nodeDownElement]
 
     ##if current node is at top right
     if currentNodeIndex == 1:
-        if gridList[currentCellNumber].neighbours[2] == -1:
+        ##no right neighboour,set cost very high
+        if gridList[currentGridNumber].neighbours[2] == -1:
             rightCost = 10
             rightHeuristic = 10
             nodeRight = ""
             nodeRightElement = ""
         else:
-            rightCost = gridList[(gridList[currentCellNumber].neighbours[2]) - 1].cost[1]
-            rightHeuristic = gridList[(gridList[currentCellNumber].neighbours[2]) - 1].cost[1]
-            nodeRight = nodeList[nodeListIndex + 1]
-            nodeRightElement = gridList[(gridList[currentCellNumber].neighbours[2]) - 1].number
-        if gridList[currentCellNumber].neighbours[1] == -1:
+            rightCost = gridList[(gridList[currentGridNumber].neighbours[2]) - 1].cost[1]
+            rightHeuristic = gridList[(gridList[currentGridNumber].neighbours[2]) - 1].heuristic[1]
+            nodeRight = letterList[nodeListIndex + 1]
+            nodeRightElement = gridList[(gridList[currentGridNumber].neighbours[2]) - 1].number
+        if gridList[currentGridNumber].neighbours[1] == -1:
             upCost = 10
             upHeuristic = 10
             nodeUp = ""
             nodeUpElement = ''
         else:
-            upCost = gridList[(gridList[currentCellNumber].neighbours[1]) - 1].cost[0]
-            upHeuristic = gridList[(gridList[currentCellNumber].neighbours[1]) - 1].heuristic[1]
-            nodeUp = nodeList[nodeListIndex - (userColumns + 1)]
-            nodeUpElement = gridList[(gridList[currentCellNumber].neighbours[1]) - 1].number
-        leftCost = gridList[currentCellNumber].cost[1]
-        leftHeuristic = gridList[currentCellNumber].heuristic[0]
-        nodeLeft = nodeList[nodeListIndex - 1]
-        nodeLeftElement = gridList[currentCellNumber].number
-        downCost = gridList[currentCellNumber].cost[2]
-        downHeuristic = gridList[currentCellNumber].heuristic[2]
-        nodeDown = nodeList[nodeListIndex + (userColumns + 1)]
-        nodeDownElement = gridList[currentCellNumber].number
+            upCost = gridList[(gridList[currentGridNumber].neighbours[1]) - 1].cost[2]
+            upHeuristic = gridList[(gridList[currentGridNumber].neighbours[1]) - 1].heuristic[1]
+            nodeUp = letterList[nodeListIndex - (userColumns + 1)]
+            nodeUpElement = gridList[(gridList[currentGridNumber].neighbours[1]) - 1].number
+        leftCost = gridList[currentGridNumber].cost[1]
+        leftHeuristic = gridList[currentGridNumber].heuristic[0]
+        nodeLeft = letterList[nodeListIndex - 1]
+        nodeLeftElement = gridList[currentGridNumber].number
+        downCost = gridList[currentGridNumber].cost[2]
+        downHeuristic = gridList[currentGridNumber].heuristic[2]
+        nodeDown = letterList[nodeListIndex + (userColumns + 1)]
+        nodeDownElement = gridList[currentGridNumber].number
         moveCost = [leftCost, upCost, rightCost, downCost]  # to move left,up,right,down
         heuristicCost = [leftHeuristic, upHeuristic, rightHeuristic, downHeuristic]
 
         algorithmCost = [leftCost + leftHeuristic, upCost + upHeuristic, rightCost + rightHeuristic,
                          downCost + downHeuristic]
+        nextElement = [nodeLeftElement, nodeUpElement, nodeRightElement, nodeDownElement]
 
     ##if current node is at bottom right
     if currentNodeIndex == 2:
-        if gridList[currentCellNumber].neighbours[2] == -1:
+        if gridList[currentGridNumber].neighbours[2] == -1:
             rightCost = 10
             rightHeuristic = 10
             nodeRight = ""
             nodeRightElement = ''
         else:
-            rightCost = gridList[(gridList[currentCellNumber].neighbours[2]) - 1].cost[3]
-            rightHeuristic = gridList[(gridList[currentCellNumber].neighbours[2]) - 1].heuristic[2]
-            nodeRight = nodeList[nodeListIndex + 1]
-            nodeRightElement = gridList[(gridList[currentCellNumber].neighbours[2]) - 1].number
-        if gridList[currentCellNumber].neighbours[3] == -1:
+            rightCost = gridList[(gridList[currentGridNumber].neighbours[2]) - 1].cost[3]
+            rightHeuristic = gridList[(gridList[currentGridNumber].neighbours[2]) - 1].heuristic[2]
+            nodeRight = letterList[nodeListIndex + 1]
+            nodeRightElement = gridList[(gridList[currentGridNumber].neighbours[2]) - 1].number
+        if gridList[currentGridNumber].neighbours[3] == -1:
             downCost = 10
             downHeuristic = 10
             nodeDown = ""
             nodeDownElement = ""
         else:
-            downCost = gridList[(gridList[currentCellNumber].neighbours[3]) - 1].cost[2]
-            downHeuristic = gridList[(gridList[currentCellNumber].neighbours[3]) - 1].heuristic[2]
-            nodeDown = nodeList[nodeListIndex + (userColumns + 1)]
-            nodeDownElement = gridList[(gridList[currentCellNumber].neighbours[3]) - 1].number
-        leftCost = gridList[currentCellNumber].cost[3]
-        leftHeuristic = gridList[currentCellNumber].heuristic[3]
-        nodeLeft = nodeList[nodeListIndex - 1]
-        nodeLeftElement = gridList[currentCellNumber].number
-        upCost = gridList[currentCellNumber].cost[2]
-        upHeuristic = gridList[currentCellNumber].heuristic[1]
-        nodeUp = nodeList[nodeListIndex - (userColumns + 1)]
-        nodeUpElement = gridList[currentCellNumber].number
+            downCost = gridList[(gridList[currentGridNumber].neighbours[3]) - 1].cost[2]
+            downHeuristic = gridList[(gridList[currentGridNumber].neighbours[3]) - 1].heuristic[2]
+            nodeDown = letterList[nodeListIndex + (userColumns + 1)]
+            nodeDownElement = gridList[(gridList[currentGridNumber].neighbours[3]) - 1].number
+        leftCost = gridList[currentGridNumber].cost[3]
+        leftHeuristic = gridList[currentGridNumber].heuristic[3]
+        nodeLeft = letterList[nodeListIndex - 1]
+        nodeLeftElement = gridList[currentGridNumber].number
+        upCost = gridList[currentGridNumber].cost[2]
+        upHeuristic = gridList[currentGridNumber].heuristic[1]
+        nodeUp = letterList[nodeListIndex - (userColumns + 1)]
+        nodeUpElement = gridList[currentGridNumber].number
         moveCost = [leftCost, upCost, rightCost, downCost]
         heuristicCost = [leftHeuristic, upHeuristic, rightHeuristic, downHeuristic]
 
         algorithmCost = [leftCost + leftHeuristic, upCost + upHeuristic, rightCost + rightHeuristic,
                          downCost + downHeuristic]
+        nextElement = [nodeLeftElement, nodeUpElement, nodeRightElement, nodeDownElement]
 
     ##if current node is at bottom left
     if currentNodeIndex == 3:
-        if gridList[currentCellNumber].neighbours[0] == -1:
+        if gridList[currentGridNumber].neighbours[0] == -1:
             leftCost = 10
             leftHeuristic = 10
             nodeLeft = ""
             nodeLeftElement = ''
         else:
-            leftCost = gridList[(gridList[currentCellNumber].neighbours[0]) - 1].cost[1]
-            leftHeuristic = gridList[(gridList[currentCellNumber].neighbours[0]) - 1].heuristic[3]
-            nodeLeft = nodeList[nodeListIndex - 1]
-            nodeLeftElement = gridList[(gridList[currentCellNumber].neighbours[0]) - 1].number
-        if gridList[currentCellNumber].neighbours[3] == -1:
+            leftCost = gridList[(gridList[currentGridNumber].neighbours[0]) - 1].cost[1]
+            leftHeuristic = gridList[(gridList[currentGridNumber].neighbours[0]) - 1].heuristic[3]
+            nodeLeft = letterList[nodeListIndex - 1]
+            nodeLeftElement = gridList[(gridList[currentGridNumber].neighbours[0]) - 1].number
+        if gridList[currentGridNumber].neighbours[3] == -1:
             downCost = 10
             downHeuristic = 10
             nodeDown = ""
             nodeDownElement = ''
         else:
-            downCost = gridList[(gridList[currentCellNumber].neighbours[3]) - 1].cost[0]
-            downHeuristic = gridList[(gridList[currentCellNumber].neighbours[0]) - 1].heuristic[3]
-            nodeDown = nodeList[nodeListIndex + (userColumns + 1)]
-            nodeDownElement = gridList[(gridList[currentCellNumber].neighbours[0]) - 1].number
-        rightCost = gridList[currentCellNumber].cost[3]
-        rightHeuristic = gridList[currentCellNumber].heuristic[2]
-        nodeRight = nodeList[nodeListIndex + 1]
-        nodeRightElement = gridList[currentCellNumber].number
-        upCost = gridList[currentCellNumber].cost[0]
-        upHeuristic = gridList[currentCellNumber].heuristic[0]
-        nodeUp = nodeList[nodeListIndex - (userColumns + 1)]
-        nodeUpElement = gridList[currentCellNumber].number
+            downCost = gridList[(gridList[currentGridNumber].neighbours[3]) - 1].cost[0]
+            downHeuristic = gridList[(gridList[currentGridNumber].neighbours[0]) - 1].heuristic[3]
+            nodeDown = letterList[nodeListIndex + (userColumns + 1)]
+            nodeDownElement = gridList[(gridList[currentGridNumber].neighbours[0]) - 1].number
+        rightCost = gridList[currentGridNumber].cost[3]
+        rightHeuristic = gridList[currentGridNumber].heuristic[2]
+        nodeRight = letterList[nodeListIndex + 1]
+        nodeRightElement = gridList[currentGridNumber].number
+        upCost = gridList[currentGridNumber].cost[0]
+        upHeuristic = gridList[currentGridNumber].heuristic[0]
+        nodeUp = letterList[nodeListIndex - (userColumns + 1)]
+        nodeUpElement = gridList[currentGridNumber].number
         moveCost = [leftCost, upCost, rightCost, downCost]
         heuristicCost = [leftHeuristic, upHeuristic, rightHeuristic, downHeuristic]
 
         algorithmCost = [leftCost + leftHeuristic, upCost + upHeuristic, rightCost + rightHeuristic,
                          downCost + downHeuristic]
+        nextElement = [nodeLeftElement, nodeUpElement, nodeRightElement, nodeDownElement]
+
+    print("Move cost: " + str(moveCost))
+    print("Heuristic cost: " + str(heuristicCost))
+    print("Algo cost: " + str(algorithmCost))
+    print("Directions: " + str(nextElement))
 
     # algorithmCost #leftMove,upMove,rightMove,bottomMove costs
+    # move direction: 0:left, 1:up, 2:right, 3:down
     openList.append(nodeLeft + "," + nodeUp + "," + nodeRight + "," + nodeDown)
-    nextNodeIndex = algorithmCost.index(min(algorithmCost))
+    moveDirection = algorithmCost.index(min(algorithmCost))
     goalStateNode = gridList[goalState - 1].nodes[1]
-    print("gsNode: " + goalStateNode)
+    print("Goal State Node: " + goalStateNode)
+    print("Visited state: " + str(visitedState))
     # if 0 left
-    if nextNodeIndex == 0:
-        visitedState.append(nodeLeft)
-        print("Visited State: " + str(visitedState))
+
+    if len(visitedState) == 10:
+        print("No path found, too many playgrounds")
+        return
+
+    if moveDirection == 0:
         print("Open List: " + str(openList))
-        if goalStateNode == nodeLeft:
+        nextCellNumber = nextElement[moveDirection]
+        if nodeLeft == goalStateNode:
+            visitedState.append(goalStateNode)
+            print("Visited state: " + str(visitedState))
+            print("Goal state reached")
             return
-        traverseGrid(nodeLeftElement - 1)
+        else:
+            print("nextCellNumber: " + str(nextCellNumber))
+            print("nextNodeLeft: " + nodeLeft)
+            print("___________________")
+            return traverseGrid(nextCellNumber - 1, nodeLeft)
 
-    if nextNodeIndex == 1:
-        visitedState.append(nodeUp)
-        print("Visited State: " + str(visitedState))
+    if moveDirection == 1:
         print("Open List: " + str(openList))
-        if goalStateNode == nodeUp:
+        nextCellNumber = nextElement[moveDirection]
+        if nodeRight == goalStateNode:
+            visitedState.append(goalStateNode)
+            print("Visited state: " + str(visitedState))
+            print("Goal state reached")
             return
-        traverseGrid(nodeUpElement - 1)
+        else:
+            print("nextCellNumber: " + str(nextCellNumber))
+            print("nextNodeUp: " + nodeUp)
+            print("___________________")
+            return traverseGrid(nextCellNumber - 1, nodeUp)
 
-    if nextNodeIndex == 2:
-        visitedState.append(nodeRight)
-        print("Visited State: " + str(visitedState))
+    if moveDirection == 2:
         print("Open List: " + str(openList))
-        if goalStateNode == nodeRight:
+        nextCellNumber = nextElement[moveDirection]
+        if nodeRight == goalStateNode:
+            visitedState.append(goalStateNode)
+            print("Visited state: " + str(visitedState))
+            print("Goal state reached")
             return
-        traverseGrid(nodeRightElement - 1)
+        else:
+            print("nextCellNumber: " + str(nextCellNumber))
+            print("nextNodeRight: " + nodeRight)
+            print("___________________")
+            return traverseGrid(nextCellNumber - 1, nodeRight)
 
-    if nextNodeIndex == 3:
-        visitedState.append(nodeDown)
-        print("Visited State: " + str(visitedState))
+    if moveDirection == 3:
         print("Open List: " + str(openList))
-        if goalStateNode == nodeDown:
+        nextCellNumber = nextElement[moveDirection]
+        if nodeDown == goalStateNode:
+            visitedState.append(goalStateNode)
+            print("Visited state: " + str(visitedState))
+            print("Goal state reached")
             return
-        traverseGrid(nodeDownElement)
-
-
-# find value of left node
-
-
-#traverseGrid(currentCell)
+        else:
+            print("nextCellNumber: " + str(nextCellNumber))
+            print("nextNodeDown: " + nodeDown)
+            print("___________________")
+            return traverseGrid(nextCellNumber - 1, nodeDown)
 
 
 # while goalStateNode != gridList[nextCell].nodes[1]:
+
+traverseGrid(currentNumber, startingNode)
 
 
 def aAlgorithm(element):
