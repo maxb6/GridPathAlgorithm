@@ -115,13 +115,31 @@ for i in range(0, len(gridList)):
                              letterList[rc + userColumns + 1]]
         rc += 1
 
-counter = 0
-for j in range(0, len(gridList)):
-    print("| ", genMap[j], " |", end='')
-    counter += 1
-    if counter == userColumns:
-        print(" ")
-        counter = 0
+nodeAmount = (userColumns * userRows) + (userColumns + userRows + 1)
+
+# generated map with node letters
+
+lCounter = -1
+gCounter = 0
+
+for i in range(0, userRows):
+    for lCounter in range(lCounter+1 , lCounter + userColumns + 2):
+        #if lCounter % (userColumns+1) == 3:
+           # print(letterList[lCounter], end='')
+        #else:
+        print(letterList[lCounter] + " ---- ", end='')
+    # lCounter = lCounter + userColumns
+    print("")
+    for gCounter in range(gCounter, gCounter + userColumns):
+        print("| ", genMap[gCounter], " |", end='')
+    gCounter += 1
+    # gCounter = gCounter + userColumns
+    print("")
+for lCounter in range(lCounter + 1, lCounter + userColumns + 2):
+    #if lCounter == nodeAmount-1:
+       # print(letterList[lCounter], end='')
+    #else:
+     print(letterList[lCounter] + " ---- ", end='')
 '''
 nodeAmount = (userColumns * userRows) + (userColumns + userRows + 1)
 
@@ -192,7 +210,7 @@ gridLength = cellLength * userRows
 # For role C
 if role == 'c' or role == 'C':
     exists = 'Q' in genMap
-    if(exists ==  False):
+    if (exists == False):
         print("\nNo path found because there in so Q in map.\nRun program again.\n")
         exit()
     # user input for x and y
@@ -249,10 +267,582 @@ if role == 'c' or role == 'C':
     print("\nStarting State: ", genMap[startCell - 1], "(Cell: ", startCell, ")   ------->  Goal State: Q ", "(Cell: ",
           goalState, ")")
 
+    #############   STEP 5 -- Cost
+
+    # find neighbours numbers for each gridElement
+    for i in range(0, len(gridList)):
+        try:
+            if gridList[i].number == gridSize:
+                gridList[i].neighbours = [gridList[i - 1].number, gridList[i - userColumns].number,
+                                          "0", "0"]
+            elif gridList[i].number > gridSize - userColumns:
+                gridList[i].neighbours = [gridList[i - 1].number, gridList[i - userColumns].number,
+                                          gridList[i + 1].number, "0"]
+            else:
+                gridList[i].neighbours = [gridList[i - 1].number, gridList[i - userColumns].number,
+                                          gridList[i + 1].number, gridList[i + userColumns].number]
+        except IndexError:
+            print("No neighbour for element: " + str(gridList[i].number))
+
+    for i in range(0, len(gridList)):
+        # check if there are no left neighbours
+        if gridList[i].number % userColumns == 1:
+            gridList[i].neighbours[0] = -1
+        # check if there are no upper neighbours
+        if gridList[i].number <= userColumns:
+            gridList[i].neighbours[1] = -1
+        # check if there are no right neighbours
+        if gridList[i].number % userColumns == 0:
+            gridList[i].neighbours[2] = -1
+        # check if there are no bottom neighbours
+        if gridList[i].number > gridSize - userColumns:
+            gridList[i].neighbours[3] = -1
+
+        # gridList[i].printElement()
+
+    # find neighbour locations for each gridElement
+    for i in range(0, len(gridList)):
+        try:
+            if gridList[i].number == gridSize:
+                gridList[i].neighbourLocations = [gridList[i - 1].locationType, gridList[i - userColumns].locationType,
+                                                  "0", "0"]
+            elif gridList[i].number > gridSize - userColumns:
+                gridList[i].neighbourLocations = [gridList[i - 1].locationType, gridList[i - userColumns].locationType,
+                                                  gridList[i + 1].locationType, "0"]
+            else:
+                gridList[i].neighbourLocations = [gridList[i - 1].locationType, gridList[i - userColumns].locationType,
+                                                  gridList[i + 1].locationType, gridList[i + userColumns].locationType]
+        except IndexError:
+            print("No neighbour for element: " + str(gridList[i].number))
+
+    for i in range(0, len(gridList)):
+        # check if there are no left neighbours
+        if gridList[i].number % userColumns == 1:
+            gridList[i].neighbourLocations[0] = "0"
+        # check if there are no upper neighbours
+        if gridList[i].number <= userColumns:
+            gridList[i].neighbourLocations[1] = "0"
+        # check if there are no right neighbours
+        if gridList[i].number % userColumns == 0:
+            gridList[i].neighbourLocations[2] = "0"
+        # check if there are no bottom neighbours
+        if gridList[i].number > gridSize - userColumns:
+            gridList[i].neighbourLocations[3] = "0"
+
+    # find cost for each grid Element dependent on what role is chosen
+    # fill cost list with -1s as default
+    for i in range(0, len(gridList)):
+        gridList[i].cost = [-1, -1, -1, -1]
+    # for role c: cost = (left,top,right,bottom)
+    for i in range(0, len(gridList)):
+        # if there are no neighbours on the left
+        if gridList[i].neighbourLocations[0] == "0":
+            if gridList[i].locationType == "Q":
+                gridList[i].cost[0] = 0
+            if gridList[i].locationType == "E":
+                gridList[i].cost[0] = 1
+            if gridList[i].locationType == "V":
+                gridList[i].cost[0] = 2
+            if gridList[i].locationType == "P":
+                gridList[i].cost[0] = 3
+        # if there are no neighbours on the top
+        if gridList[i].neighbourLocations[1] == "0":
+            if gridList[i].locationType == "Q":
+                gridList[i].cost[1] = 0
+            if gridList[i].locationType == "E":
+                gridList[i].cost[1] = 1
+            if gridList[i].locationType == "V":
+                gridList[i].cost[1] = 2
+            if gridList[i].locationType == "P":
+                gridList[i].cost[1] = 3
+        # if there are no neighbours on the right
+        if gridList[i].neighbourLocations[2] == "0":
+            if gridList[i].locationType == "Q":
+                gridList[i].cost[2] = 0
+            if gridList[i].locationType == "E":
+                gridList[i].cost[2] = 1
+            if gridList[i].locationType == "V":
+                gridList[i].cost[2] = 2
+            if gridList[i].locationType == "P":
+                gridList[i].cost[2] = 3
+        # if there are no neighbours on the bottom
+        if gridList[i].neighbourLocations[3] == "0":
+            if gridList[i].locationType == "Q":
+                gridList[i].cost[3] = 0
+            if gridList[i].locationType == "E":
+                gridList[i].cost[3] = 1
+            if gridList[i].locationType == "V":
+                gridList[i].cost[3] = 2
+            if gridList[i].locationType == "P":
+                gridList[i].cost[3] = 3
+        # if there is a neighbour that is a quarantine place
+        if gridList[i].neighbourLocations[0] == "Q":
+            if gridList[i].locationType == "Q":
+                gridList[i].cost[0] = 0
+            if gridList[i].locationType == "E":
+                gridList[i].cost[0] = 0.5
+            if gridList[i].locationType == "V":
+                gridList[i].cost[0] = 1
+            if gridList[i].locationType == "P":
+                gridList[i].cost[0] = 1.5
+        if gridList[i].neighbourLocations[1] == "Q":
+            if gridList[i].locationType == "Q":
+                gridList[i].cost[1] = 0
+            if gridList[i].locationType == "E":
+                gridList[i].cost[1] = 0.5
+            if gridList[i].locationType == "V":
+                gridList[i].cost[1] = 1
+            if gridList[i].locationType == "P":
+                gridList[i].cost[1] = 1.5
+        if gridList[i].neighbourLocations[2] == "Q":
+            if gridList[i].locationType == "Q":
+                gridList[i].cost[2] = 0
+            if gridList[i].locationType == "E":
+                gridList[i].cost[2] = 0.5
+            if gridList[i].locationType == "V":
+                gridList[i].cost[2] = 1
+            if gridList[i].locationType == "P":
+                gridList[i].cost[2] = 1.5
+        if gridList[i].neighbourLocations[3] == "Q":
+            if gridList[i].locationType == "Q":
+                gridList[i].cost[3] = 0
+            if gridList[i].locationType == "E":
+                gridList[i].cost[3] = 0.5
+            if gridList[i].locationType == "V":
+                gridList[i].cost[3] = 1
+            if gridList[i].locationType == "P":
+                gridList[i].cost[3] = 1.5
+
+        ############## if there is a neighbour that is a vaccine place
+        if gridList[i].neighbourLocations[0] == "V":
+            if gridList[i].locationType == "Q":
+                gridList[i].cost[0] = 1
+            if gridList[i].locationType == "E":
+                gridList[i].cost[0] = 1.5
+            if gridList[i].locationType == "V":
+                gridList[i].cost[0] = 2
+            if gridList[i].locationType == "P":
+                gridList[i].cost[0] = 2.5
+        if gridList[i].neighbourLocations[1] == "V":
+            if gridList[i].locationType == "Q":
+                gridList[i].cost[1] = 1
+            if gridList[i].locationType == "E":
+                gridList[i].cost[1] = 1.5
+            if gridList[i].locationType == "V":
+                gridList[i].cost[1] = 2
+            if gridList[i].locationType == "P":
+                gridList[i].cost[1] = 2.5
+        if gridList[i].neighbourLocations[2] == "V":
+            if gridList[i].locationType == "Q":
+                gridList[i].cost[2] = 1
+            if gridList[i].locationType == "E":
+                gridList[i].cost[2] = 1.5
+            if gridList[i].locationType == "V":
+                gridList[i].cost[2] = 2
+            if gridList[i].locationType == "P":
+                gridList[i].cost[2] = 2.5
+        if gridList[i].neighbourLocations[3] == "V":
+            if gridList[i].locationType == "Q":
+                gridList[i].cost[3] = 1
+            if gridList[i].locationType == "E":
+                gridList[i].cost[3] = 1.5
+            if gridList[i].locationType == "V":
+                gridList[i].cost[3] = 2
+            if gridList[i].locationType == "P":
+                gridList[i].cost[3] = 2.5
+
+        ############## if there is a neighbour that is a playground
+        if gridList[i].neighbourLocations[0] == "P":
+            if gridList[i].locationType == "Q":
+                gridList[i].cost[0] = 1.5
+            if gridList[i].locationType == "E":
+                gridList[i].cost[0] = 2
+            if gridList[i].locationType == "V":
+                gridList[i].cost[0] = 2.5
+            if gridList[i].locationType == "P":
+                gridList[i].cost[0] = 3
+        if gridList[i].neighbourLocations[1] == "P":
+            if gridList[i].locationType == "Q":
+                gridList[i].cost[1] = 1.5
+            if gridList[i].locationType == "E":
+                gridList[i].cost[1] = 2
+            if gridList[i].locationType == "V":
+                gridList[i].cost[1] = 2.5
+            if gridList[i].locationType == "P":
+                gridList[i].cost[1] = 3
+        if gridList[i].neighbourLocations[2] == "P":
+            if gridList[i].locationType == "Q":
+                gridList[i].cost[2] = 1.5
+            if gridList[i].locationType == "E":
+                gridList[i].cost[2] = 2
+            if gridList[i].locationType == "V":
+                gridList[i].cost[2] = 2.5
+            if gridList[i].locationType == "P":
+                gridList[i].cost[2] = 3
+        if gridList[i].neighbourLocations[3] == "P":
+            if gridList[i].locationType == "Q":
+                gridList[i].cost[3] = 1.5
+            if gridList[i].locationType == "E":
+                gridList[i].cost[3] = 2
+            if gridList[i].locationType == "V":
+                gridList[i].cost[3] = 2.5
+            if gridList[i].locationType == "P":
+                gridList[i].cost[3] = 3
+
+            ############## if there is a neighbour that is EMPTY
+        if gridList[i].neighbourLocations[0] == "E":
+            if gridList[i].locationType == "Q":
+                gridList[i].cost[0] = 0.5
+            if gridList[i].locationType == "E":
+                gridList[i].cost[0] = 1
+            if gridList[i].locationType == "V":
+                gridList[i].cost[0] = 1.5
+            if gridList[i].locationType == "P":
+                gridList[i].cost[0] = 2
+        if gridList[i].neighbourLocations[1] == "E":
+            if gridList[i].locationType == "Q":
+                gridList[i].cost[1] = 0.5
+            if gridList[i].locationType == "E":
+                gridList[i].cost[1] = 1
+            if gridList[i].locationType == "V":
+                gridList[i].cost[1] = 1.5
+            if gridList[i].locationType == "P":
+                gridList[i].cost[1] = 2
+        if gridList[i].neighbourLocations[2] == "E":
+            if gridList[i].locationType == "Q":
+                gridList[i].cost[2] = 0.5
+            if gridList[i].locationType == "E":
+                gridList[i].cost[2] = 1
+            if gridList[i].locationType == "V":
+                gridList[i].cost[2] = 1.5
+            if gridList[i].locationType == "P":
+                gridList[i].cost[2] = 2
+        if gridList[i].neighbourLocations[3] == "E":
+            if gridList[i].locationType == "Q":
+                gridList[i].cost[3] = 0.5
+            if gridList[i].locationType == "E":
+                gridList[i].cost[3] = 1
+            if gridList[i].locationType == "V":
+                gridList[i].cost[3] = 1.5
+            if gridList[i].locationType == "P":
+                gridList[i].cost[3] = 2
+
+    '''
+    for i in range(len(nodeList)):
+        if i <= userColumns:
+            nodeList[i].moveCost = [gridList[i-1].cost[1], gridList[i - 1].cost[2], gridList[i].cost[1], gridList[i].cost[0]]
+        if userColumns < i <= userColumns*2:
+            nodeList[i].moveCost = [gridList[i - 2].cost[1], gridList[i - 2].cost[2], gridList[i-1].cost[1],
+                                    gridList[i-1].cost[0]]
+        if userColumns*2 < i <= userColumns*3:
+            nodeList[i].moveCost = [gridList[i - 3].cost[1], gridList[i - 3].cost[2], gridList[i-2].cost[1],
+                                    gridList[i-2].cost[0]]
+    '''
+
+    print("\n=========================================================================")
+
+    #############   STEP 6 -- Heuristic and A* Algorithms for Optimal Path
+    for l in range(0, len(gridList)):
+        gridList[l].heuristic = [-1, -1, -1, -1]  # left,top,right,bottom
+    for i in range(0, len(gridList)):
+        # get row and column for current gridList element
+        currentRow = math.ceil(gridList[i].number / userRows)
+        currentColumn = gridList[i].number % userColumns
+        if currentColumn == 0:
+            currentColumn = userColumns
+        # get x and y coordinate for current element
+        topRightX = round((currentColumn * 0.1), 2)
+        topRightY = round(((currentRow - 1) * 0.2), 2)
+
+        topLeftX = round(((currentColumn - 1) * 0.1), 2)
+        topLeftY = topRightY
+
+        bottomRightX = topRightX
+        bottomRightY = round((currentRow * 0.2), 2)
+
+        bottomLeftX = topLeftX
+        bottomLeftY = bottomRightY
+
+        # get distance to goal state
+        topRightDistance = math.sqrt((abs((goalStateX - topRightX)) ** 2) + (abs((goalStateY - topRightY)) ** 2))
+        topLeftDistance = math.sqrt((abs((goalStateX - topLeftX)) ** 2) + (abs((goalStateY - topLeftY)) ** 2))
+        bottomRightDistance = math.sqrt(
+            (abs((goalStateX - bottomRightX)) ** 2) + (abs((goalStateY - bottomRightY)) ** 2))
+        bottomLeftDistance = math.sqrt((abs((goalStateX - bottomLeftX)) ** 2) + (abs((goalStateY - bottomLeftY)) ** 2))
+        '''
+        print("TopLeft: " + str(topLeftDistance) +"TopRight: " + str(topRightDistance) + ",BottomRight: " + str(
+            bottomRightDistance) + ",BottomLeft: " + str(bottomLeftDistance) + " for number: " + str(gridList[i].number))
+        '''
+        # rate Distances for heuristic
+        heuristicDistanceList = [topLeftDistance, topRightDistance, bottomRightDistance,
+                                 bottomLeftDistance]  # topleft,topright,bottomright,bottomleft
+        hAmount = 0
+        for p in range(0, len(heuristicDistanceList)):
+            heuristicIndex = heuristicDistanceList.index(min(heuristicDistanceList))
+            heuristicDistanceList[heuristicIndex] = 100
+            gridList[i].heuristic[heuristicIndex] = hAmount
+            hAmount += 1
+
+        # gridList[i].printElement()
+
+    openList = []
+    closedList = []
+    visitedState = []
+
+    optimalPath = []
+
+    startingNode = gridList[startCell - 1].nodes[1]
+    currentNumber = startCell - 1
+    currentNode = startingNode
+
+    for i in range(len(gridList)):
+        gridList[i].printElement()
+
+
+    def traverseGrid(currentGridNumber, nextNode):
+        visitedState.append(nextNode)
+        currentNodeList = []
+        for k in range(0, 4):
+            currentNodeList.append(gridList[currentGridNumber].nodes[k])
+        print("current node list: " + str(currentNodeList))
+        currentNodeIndex = currentNodeList.index(nextNode)
+        print("CurrentNodeIndex: " + str(currentNodeIndex))
+        nodeListIndex = letterList.index(nextNode)
+
+        # if the current node is on the top left, takes from left and top neighbour
+        # left movement cost comes from left neighbour, top movement cost comes from top neighbour
+        if currentNodeIndex == 0:
+            if gridList[currentGridNumber].neighbours[0] == -1:
+                leftCost = 10
+                leftHeuristic = 10
+                nodeLeft = ""
+                nodeLeftElement = ""
+            else:
+                leftCost = gridList[(gridList[currentGridNumber].neighbours[0]) - 1].cost[1]
+                leftHeuristic = gridList[(gridList[currentGridNumber].neighbours[0]) - 1].heuristic[0]
+                nodeLeft = letterList[nodeListIndex - 1]
+                nodeLeftElement = gridList[(gridList[currentGridNumber].neighbours[0]) - 1].number
+            if gridList[currentGridNumber].neighbours[1] == -1:
+                upCost = 10
+                upHeuristic = 10
+                nodeUp = ""
+                nodeUpElement = ""
+            else:
+                upCost = gridList[(gridList[currentGridNumber].neighbours[1]) - 1].cost[0]
+                upHeuristic = gridList[(gridList[currentGridNumber].neighbours[1]) - 1].heuristic[0]
+                nodeUp = letterList[nodeListIndex - (userColumns + 1)]
+                nodeUpElement = gridList[(gridList[currentGridNumber].neighbours[1]) - 1].number
+            rightCost = gridList[currentGridNumber].cost[1]
+            rightHeuristic = gridList[currentGridNumber].heuristic[1]
+            nodeRight = letterList[nodeListIndex + 1]
+            nodeRightElement = gridList[currentGridNumber].number
+            downCost = gridList[currentGridNumber].cost[0]
+            downHeuristic = gridList[currentGridNumber].heuristic[3]
+            nodeDown = letterList[nodeListIndex + (userColumns + 1)]
+            nodeDownElement = gridList[currentGridNumber].number
+            moveCost = [leftCost, upCost, rightCost, downCost]  # to move left,up,right,down
+            heuristicCost = [leftHeuristic, upHeuristic, rightHeuristic, downHeuristic]
+
+            algorithmCost = [leftCost + leftHeuristic, upCost + upHeuristic, rightCost + rightHeuristic,
+                             downCost + downHeuristic]
+            nextElement = [nodeLeftElement, nodeUpElement, nodeRightElement, nodeDownElement]
+
+        ##if current node is at top right
+        if currentNodeIndex == 1:
+            ##no right neighboour,set cost very high
+            if gridList[currentGridNumber].neighbours[2] == -1:
+                rightCost = 10
+                rightHeuristic = 10
+                nodeRight = ""
+                nodeRightElement = ""
+            else:
+                rightCost = gridList[(gridList[currentGridNumber].neighbours[2]) - 1].cost[1]
+                rightHeuristic = gridList[(gridList[currentGridNumber].neighbours[2]) - 1].heuristic[1]
+                nodeRight = letterList[nodeListIndex + 1]
+                nodeRightElement = gridList[(gridList[currentGridNumber].neighbours[2]) - 1].number
+            if gridList[currentGridNumber].neighbours[1] == -1:
+                upCost = 10
+                upHeuristic = 10
+                nodeUp = ""
+                nodeUpElement = ''
+            else:
+                upCost = gridList[(gridList[currentGridNumber].neighbours[1]) - 1].cost[2]
+                upHeuristic = gridList[(gridList[currentGridNumber].neighbours[1]) - 1].heuristic[1]
+                nodeUp = letterList[nodeListIndex - (userColumns + 1)]
+                nodeUpElement = gridList[(gridList[currentGridNumber].neighbours[1]) - 1].number
+            leftCost = gridList[currentGridNumber].cost[1]
+            leftHeuristic = gridList[currentGridNumber].heuristic[0]
+            nodeLeft = letterList[nodeListIndex - 1]
+            nodeLeftElement = gridList[currentGridNumber].number
+            downCost = gridList[currentGridNumber].cost[2]
+            downHeuristic = gridList[currentGridNumber].heuristic[2]
+            nodeDown = letterList[nodeListIndex + (userColumns + 1)]
+            nodeDownElement = gridList[currentGridNumber].number
+            moveCost = [leftCost, upCost, rightCost, downCost]  # to move left,up,right,down
+            heuristicCost = [leftHeuristic, upHeuristic, rightHeuristic, downHeuristic]
+
+            algorithmCost = [leftCost + leftHeuristic, upCost + upHeuristic, rightCost + rightHeuristic,
+                             downCost + downHeuristic]
+            nextElement = [nodeLeftElement, nodeUpElement, nodeRightElement, nodeDownElement]
+
+        ##if current node is at bottom right
+        if currentNodeIndex == 2:
+            if gridList[currentGridNumber].neighbours[2] == -1:
+                rightCost = 10
+                rightHeuristic = 10
+                nodeRight = ""
+                nodeRightElement = ''
+            else:
+                rightCost = gridList[(gridList[currentGridNumber].neighbours[2]) - 1].cost[3]
+                rightHeuristic = gridList[(gridList[currentGridNumber].neighbours[2]) - 1].heuristic[2]
+                nodeRight = letterList[nodeListIndex + 1]
+                nodeRightElement = gridList[(gridList[currentGridNumber].neighbours[2]) - 1].number
+            if gridList[currentGridNumber].neighbours[3] == -1:
+                downCost = 10
+                downHeuristic = 10
+                nodeDown = ""
+                nodeDownElement = ""
+            else:
+                downCost = gridList[(gridList[currentGridNumber].neighbours[3]) - 1].cost[2]
+                downHeuristic = gridList[(gridList[currentGridNumber].neighbours[3]) - 1].heuristic[2]
+                nodeDown = letterList[nodeListIndex + (userColumns + 1)]
+                nodeDownElement = gridList[(gridList[currentGridNumber].neighbours[3]) - 1].number
+            leftCost = gridList[currentGridNumber].cost[3]
+            leftHeuristic = gridList[currentGridNumber].heuristic[3]
+            nodeLeft = letterList[nodeListIndex - 1]
+            nodeLeftElement = gridList[currentGridNumber].number
+            upCost = gridList[currentGridNumber].cost[2]
+            upHeuristic = gridList[currentGridNumber].heuristic[1]
+            nodeUp = letterList[nodeListIndex - (userColumns + 1)]
+            nodeUpElement = gridList[currentGridNumber].number
+            moveCost = [leftCost, upCost, rightCost, downCost]
+            heuristicCost = [leftHeuristic, upHeuristic, rightHeuristic, downHeuristic]
+
+            algorithmCost = [leftCost + leftHeuristic, upCost + upHeuristic, rightCost + rightHeuristic,
+                             downCost + downHeuristic]
+            nextElement = [nodeLeftElement, nodeUpElement, nodeRightElement, nodeDownElement]
+
+        ##if current node is at bottom left
+        if currentNodeIndex == 3:
+            if gridList[currentGridNumber].neighbours[0] == -1:
+                leftCost = 10
+                leftHeuristic = 10
+                nodeLeft = ""
+                nodeLeftElement = ''
+            else:
+                leftCost = gridList[(gridList[currentGridNumber].neighbours[0]) - 1].cost[1]
+                leftHeuristic = gridList[(gridList[currentGridNumber].neighbours[0]) - 1].heuristic[3]
+                nodeLeft = letterList[nodeListIndex - 1]
+                nodeLeftElement = gridList[(gridList[currentGridNumber].neighbours[0]) - 1].number
+            if gridList[currentGridNumber].neighbours[3] == -1:
+                downCost = 10
+                downHeuristic = 10
+                nodeDown = ""
+                nodeDownElement = ''
+            else:
+                downCost = gridList[(gridList[currentGridNumber].neighbours[3]) - 1].cost[0]
+                downHeuristic = gridList[(gridList[currentGridNumber].neighbours[0]) - 1].heuristic[3]
+                nodeDown = letterList[nodeListIndex + (userColumns + 1)]
+                nodeDownElement = gridList[(gridList[currentGridNumber].neighbours[0]) - 1].number
+            rightCost = gridList[currentGridNumber].cost[3]
+            rightHeuristic = gridList[currentGridNumber].heuristic[2]
+            nodeRight = letterList[nodeListIndex + 1]
+            nodeRightElement = gridList[currentGridNumber].number
+            upCost = gridList[currentGridNumber].cost[0]
+            upHeuristic = gridList[currentGridNumber].heuristic[0]
+            nodeUp = letterList[nodeListIndex - (userColumns + 1)]
+            nodeUpElement = gridList[currentGridNumber].number
+            moveCost = [leftCost, upCost, rightCost, downCost]
+            heuristicCost = [leftHeuristic, upHeuristic, rightHeuristic, downHeuristic]
+
+            algorithmCost = [leftCost + leftHeuristic, upCost + upHeuristic, rightCost + rightHeuristic,
+                             downCost + downHeuristic]
+            nextElement = [nodeLeftElement, nodeUpElement, nodeRightElement, nodeDownElement]
+
+        print("Move cost: " + str(moveCost))
+        print("Heuristic cost: " + str(heuristicCost))
+        print("Algo cost: " + str(algorithmCost))
+        print("Directions: " + str(nextElement))
+
+        # algorithmCost #leftMove,upMove,rightMove,bottomMove costs
+        # move direction: 0:left, 1:up, 2:right, 3:down
+        openList.append(nodeLeft + "," + nodeUp + "," + nodeRight + "," + nodeDown)
+        moveDirection = algorithmCost.index(min(algorithmCost))
+        goalStateNode = gridList[goalState - 1].nodes[1]
+        print("Goal State Node: " + goalStateNode)
+        print("Visited state: " + str(visitedState))
+        # if 0 left
+
+        if len(visitedState) == 10:
+            print("No path found, too many playgrounds")
+            return
+
+        if moveDirection == 0:
+            print("Open List: " + str(openList))
+            nextCellNumber = nextElement[moveDirection]
+            if nodeLeft == goalStateNode:
+                visitedState.append(goalStateNode)
+                print("Visited state: " + str(visitedState))
+                print("Goal state reached")
+                return
+            else:
+                print("nextCellNumber: " + str(nextCellNumber))
+                print("nextNodeLeft: " + nodeLeft)
+                print("___________________")
+                return traverseGrid(nextCellNumber - 1, nodeLeft)
+
+        if moveDirection == 1:
+            print("Open List: " + str(openList))
+            nextCellNumber = nextElement[moveDirection]
+            if nodeRight == goalStateNode:
+                visitedState.append(goalStateNode)
+                print("Visited state: " + str(visitedState))
+                print("Goal state reached")
+                return
+            else:
+                print("nextCellNumber: " + str(nextCellNumber))
+                print("nextNodeUp: " + nodeUp)
+                print("___________________")
+                return traverseGrid(nextCellNumber - 1, nodeUp)
+
+        if moveDirection == 2:
+            print("Open List: " + str(openList))
+            nextCellNumber = nextElement[moveDirection]
+            if nodeRight == goalStateNode:
+                visitedState.append(goalStateNode)
+                print("Visited state: " + str(visitedState))
+                print("Goal state reached")
+                return
+            else:
+                print("nextCellNumber: " + str(nextCellNumber))
+                print("nextNodeRight: " + nodeRight)
+                print("___________________")
+                return traverseGrid(nextCellNumber - 1, nodeRight)
+
+        if moveDirection == 3:
+            print("Open List: " + str(openList))
+            nextCellNumber = nextElement[moveDirection]
+            if nodeDown == goalStateNode:
+                visitedState.append(goalStateNode)
+                print("Visited state: " + str(visitedState))
+                print("Goal state reached")
+                return
+
+            else:
+                print("nextCellNumber: " + str(nextCellNumber))
+                print("nextNodeDown: " + nodeDown)
+                print("___________________")
+                return traverseGrid(nextCellNumber - 1, nodeDown)
+
+
+    # while goalStateNode != gridList[nextCell].nodes[1]:
+
+    traverseGrid(currentNumber, startingNode)
+
 # For role P
 if role == 'p' or role == 'P':
     exists = 'P' in genMap
-    if(exists ==  False):
+    if (exists == False):
         print("\nNo path found because there in so P in map.\nRun program again.\n")
         exit()
     # user input for x and y
@@ -306,584 +896,6 @@ if role == 'p' or role == 'P':
 
     print("\nStarting State: ", genMap[startCell - 1], "(Cell: ", startCell, ")   ------->  Goal State: P ", "(Cell: ",
           goalState, ")")
-
-#############   STEP 5 -- Cost
-
-# find neighbours numbers for each gridElement
-for i in range(0, len(gridList)):
-    try:
-        if gridList[i].number == gridSize:
-            gridList[i].neighbours = [gridList[i - 1].number, gridList[i - userColumns].number,
-                                      "0", "0"]
-        elif gridList[i].number > gridSize - userColumns:
-            gridList[i].neighbours = [gridList[i - 1].number, gridList[i - userColumns].number,
-                                      gridList[i + 1].number, "0"]
-        else:
-            gridList[i].neighbours = [gridList[i - 1].number, gridList[i - userColumns].number,
-                                      gridList[i + 1].number, gridList[i + userColumns].number]
-    except IndexError:
-        print("No neighbour for element: " + str(gridList[i].number))
-
-for i in range(0, len(gridList)):
-    # check if there are no left neighbours
-    if gridList[i].number % userColumns == 1:
-        gridList[i].neighbours[0] = -1
-    # check if there are no upper neighbours
-    if gridList[i].number <= userColumns:
-        gridList[i].neighbours[1] = -1
-    # check if there are no right neighbours
-    if gridList[i].number % userColumns == 0:
-        gridList[i].neighbours[2] = -1
-    # check if there are no bottom neighbours
-    if gridList[i].number > gridSize - userColumns:
-        gridList[i].neighbours[3] = -1
-
-    # gridList[i].printElement()
-
-# find neighbour locations for each gridElement
-for i in range(0, len(gridList)):
-    try:
-        if gridList[i].number == gridSize:
-            gridList[i].neighbourLocations = [gridList[i - 1].locationType, gridList[i - userColumns].locationType,
-                                              "0", "0"]
-        elif gridList[i].number > gridSize - userColumns:
-            gridList[i].neighbourLocations = [gridList[i - 1].locationType, gridList[i - userColumns].locationType,
-                                              gridList[i + 1].locationType, "0"]
-        else:
-            gridList[i].neighbourLocations = [gridList[i - 1].locationType, gridList[i - userColumns].locationType,
-                                              gridList[i + 1].locationType, gridList[i + userColumns].locationType]
-    except IndexError:
-        print("No neighbour for element: " + str(gridList[i].number))
-
-for i in range(0, len(gridList)):
-    # check if there are no left neighbours
-    if gridList[i].number % userColumns == 1:
-        gridList[i].neighbourLocations[0] = "0"
-    # check if there are no upper neighbours
-    if gridList[i].number <= userColumns:
-        gridList[i].neighbourLocations[1] = "0"
-    # check if there are no right neighbours
-    if gridList[i].number % userColumns == 0:
-        gridList[i].neighbourLocations[2] = "0"
-    # check if there are no bottom neighbours
-    if gridList[i].number > gridSize - userColumns:
-        gridList[i].neighbourLocations[3] = "0"
-
-# find cost for each grid Element dependent on what role is chosen
-# fill cost list with -1s as default
-for i in range(0, len(gridList)):
-    gridList[i].cost = [-1, -1, -1, -1]
-# for role c: cost = (left,top,right,bottom)
-for i in range(0, len(gridList)):
-    # if there are no neighbours on the left
-    if gridList[i].neighbourLocations[0] == "0":
-        if gridList[i].locationType == "Q":
-            gridList[i].cost[0] = 0
-        if gridList[i].locationType == "E":
-            gridList[i].cost[0] = 1
-        if gridList[i].locationType == "V":
-            gridList[i].cost[0] = 2
-        if gridList[i].locationType == "P":
-            gridList[i].cost[0] = 3
-    # if there are no neighbours on the top
-    if gridList[i].neighbourLocations[1] == "0":
-        if gridList[i].locationType == "Q":
-            gridList[i].cost[1] = 0
-        if gridList[i].locationType == "E":
-            gridList[i].cost[1] = 1
-        if gridList[i].locationType == "V":
-            gridList[i].cost[1] = 2
-        if gridList[i].locationType == "P":
-            gridList[i].cost[1] = 3
-    # if there are no neighbours on the right
-    if gridList[i].neighbourLocations[2] == "0":
-        if gridList[i].locationType == "Q":
-            gridList[i].cost[2] = 0
-        if gridList[i].locationType == "E":
-            gridList[i].cost[2] = 1
-        if gridList[i].locationType == "V":
-            gridList[i].cost[2] = 2
-        if gridList[i].locationType == "P":
-            gridList[i].cost[2] = 3
-    # if there are no neighbours on the bottom
-    if gridList[i].neighbourLocations[3] == "0":
-        if gridList[i].locationType == "Q":
-            gridList[i].cost[3] = 0
-        if gridList[i].locationType == "E":
-            gridList[i].cost[3] = 1
-        if gridList[i].locationType == "V":
-            gridList[i].cost[3] = 2
-        if gridList[i].locationType == "P":
-            gridList[i].cost[3] = 3
-    # if there is a neighbour that is a quarantine place
-    if gridList[i].neighbourLocations[0] == "Q":
-        if gridList[i].locationType == "Q":
-            gridList[i].cost[0] = 0
-        if gridList[i].locationType == "E":
-            gridList[i].cost[0] = 0.5
-        if gridList[i].locationType == "V":
-            gridList[i].cost[0] = 1
-        if gridList[i].locationType == "P":
-            gridList[i].cost[0] = 1.5
-    if gridList[i].neighbourLocations[1] == "Q":
-        if gridList[i].locationType == "Q":
-            gridList[i].cost[1] = 0
-        if gridList[i].locationType == "E":
-            gridList[i].cost[1] = 0.5
-        if gridList[i].locationType == "V":
-            gridList[i].cost[1] = 1
-        if gridList[i].locationType == "P":
-            gridList[i].cost[1] = 1.5
-    if gridList[i].neighbourLocations[2] == "Q":
-        if gridList[i].locationType == "Q":
-            gridList[i].cost[2] = 0
-        if gridList[i].locationType == "E":
-            gridList[i].cost[2] = 0.5
-        if gridList[i].locationType == "V":
-            gridList[i].cost[2] = 1
-        if gridList[i].locationType == "P":
-            gridList[i].cost[2] = 1.5
-    if gridList[i].neighbourLocations[3] == "Q":
-        if gridList[i].locationType == "Q":
-            gridList[i].cost[3] = 0
-        if gridList[i].locationType == "E":
-            gridList[i].cost[3] = 0.5
-        if gridList[i].locationType == "V":
-            gridList[i].cost[3] = 1
-        if gridList[i].locationType == "P":
-            gridList[i].cost[3] = 1.5
-
-    ############## if there is a neighbour that is a vaccine place
-    if gridList[i].neighbourLocations[0] == "V":
-        if gridList[i].locationType == "Q":
-            gridList[i].cost[0] = 1
-        if gridList[i].locationType == "E":
-            gridList[i].cost[0] = 1.5
-        if gridList[i].locationType == "V":
-            gridList[i].cost[0] = 2
-        if gridList[i].locationType == "P":
-            gridList[i].cost[0] = 2.5
-    if gridList[i].neighbourLocations[1] == "V":
-        if gridList[i].locationType == "Q":
-            gridList[i].cost[1] = 1
-        if gridList[i].locationType == "E":
-            gridList[i].cost[1] = 1.5
-        if gridList[i].locationType == "V":
-            gridList[i].cost[1] = 2
-        if gridList[i].locationType == "P":
-            gridList[i].cost[1] = 2.5
-    if gridList[i].neighbourLocations[2] == "V":
-        if gridList[i].locationType == "Q":
-            gridList[i].cost[2] = 1
-        if gridList[i].locationType == "E":
-            gridList[i].cost[2] = 1.5
-        if gridList[i].locationType == "V":
-            gridList[i].cost[2] = 2
-        if gridList[i].locationType == "P":
-            gridList[i].cost[2] = 2.5
-    if gridList[i].neighbourLocations[3] == "V":
-        if gridList[i].locationType == "Q":
-            gridList[i].cost[3] = 1
-        if gridList[i].locationType == "E":
-            gridList[i].cost[3] = 1.5
-        if gridList[i].locationType == "V":
-            gridList[i].cost[3] = 2
-        if gridList[i].locationType == "P":
-            gridList[i].cost[3] = 2.5
-
-    ############## if there is a neighbour that is a playground
-    if gridList[i].neighbourLocations[0] == "P":
-        if gridList[i].locationType == "Q":
-            gridList[i].cost[0] = 1.5
-        if gridList[i].locationType == "E":
-            gridList[i].cost[0] = 2
-        if gridList[i].locationType == "V":
-            gridList[i].cost[0] = 2.5
-        if gridList[i].locationType == "P":
-            gridList[i].cost[0] = 3
-    if gridList[i].neighbourLocations[1] == "P":
-        if gridList[i].locationType == "Q":
-            gridList[i].cost[1] = 1.5
-        if gridList[i].locationType == "E":
-            gridList[i].cost[1] = 2
-        if gridList[i].locationType == "V":
-            gridList[i].cost[1] = 2.5
-        if gridList[i].locationType == "P":
-            gridList[i].cost[1] = 3
-    if gridList[i].neighbourLocations[2] == "P":
-        if gridList[i].locationType == "Q":
-            gridList[i].cost[2] = 1.5
-        if gridList[i].locationType == "E":
-            gridList[i].cost[2] = 2
-        if gridList[i].locationType == "V":
-            gridList[i].cost[2] = 2.5
-        if gridList[i].locationType == "P":
-            gridList[i].cost[2] = 3
-    if gridList[i].neighbourLocations[3] == "P":
-        if gridList[i].locationType == "Q":
-            gridList[i].cost[3] = 1.5
-        if gridList[i].locationType == "E":
-            gridList[i].cost[3] = 2
-        if gridList[i].locationType == "V":
-            gridList[i].cost[3] = 2.5
-        if gridList[i].locationType == "P":
-            gridList[i].cost[3] = 3
-
-        ############## if there is a neighbour that is EMPTY
-    if gridList[i].neighbourLocations[0] == "E":
-        if gridList[i].locationType == "Q":
-            gridList[i].cost[0] = 0.5
-        if gridList[i].locationType == "E":
-            gridList[i].cost[0] = 1
-        if gridList[i].locationType == "V":
-            gridList[i].cost[0] = 1.5
-        if gridList[i].locationType == "P":
-            gridList[i].cost[0] = 2
-    if gridList[i].neighbourLocations[1] == "E":
-        if gridList[i].locationType == "Q":
-            gridList[i].cost[1] = 0.5
-        if gridList[i].locationType == "E":
-            gridList[i].cost[1] = 1
-        if gridList[i].locationType == "V":
-            gridList[i].cost[1] = 1.5
-        if gridList[i].locationType == "P":
-            gridList[i].cost[1] = 2
-    if gridList[i].neighbourLocations[2] == "E":
-        if gridList[i].locationType == "Q":
-            gridList[i].cost[2] = 0.5
-        if gridList[i].locationType == "E":
-            gridList[i].cost[2] = 1
-        if gridList[i].locationType == "V":
-            gridList[i].cost[2] = 1.5
-        if gridList[i].locationType == "P":
-            gridList[i].cost[2] = 2
-    if gridList[i].neighbourLocations[3] == "E":
-        if gridList[i].locationType == "Q":
-            gridList[i].cost[3] = 0.5
-        if gridList[i].locationType == "E":
-            gridList[i].cost[3] = 1
-        if gridList[i].locationType == "V":
-            gridList[i].cost[3] = 1.5
-        if gridList[i].locationType == "P":
-            gridList[i].cost[3] = 2
-
-'''
-for i in range(len(nodeList)):
-    if i <= userColumns:
-        nodeList[i].moveCost = [gridList[i-1].cost[1], gridList[i - 1].cost[2], gridList[i].cost[1], gridList[i].cost[0]]
-    if userColumns < i <= userColumns*2:
-        nodeList[i].moveCost = [gridList[i - 2].cost[1], gridList[i - 2].cost[2], gridList[i-1].cost[1],
-                                gridList[i-1].cost[0]]
-    if userColumns*2 < i <= userColumns*3:
-        nodeList[i].moveCost = [gridList[i - 3].cost[1], gridList[i - 3].cost[2], gridList[i-2].cost[1],
-                                gridList[i-2].cost[0]]
-'''
-
-print("\n=========================================================================")
-
-#############   STEP 6 -- Heuristic and A* Algorithms for Optimal Path
-for l in range(0, len(gridList)):
-    gridList[l].heuristic = [-1, -1, -1, -1]  # left,top,right,bottom
-for i in range(0, len(gridList)):
-    # get row and column for current gridList element
-    currentRow = math.ceil(gridList[i].number / userRows)
-    currentColumn = gridList[i].number % userColumns
-    if currentColumn == 0:
-        currentColumn = userColumns
-    # get x and y coordinate for current element
-    topRightX = round((currentColumn * 0.1), 2)
-    topRightY = round(((currentRow - 1) * 0.2), 2)
-
-    topLeftX = round(((currentColumn - 1) * 0.1), 2)
-    topLeftY = topRightY
-
-    bottomRightX = topRightX
-    bottomRightY = round((currentRow * 0.2), 2)
-
-    bottomLeftX = topLeftX
-    bottomLeftY = bottomRightY
-
-    # get distance to goal state
-    topRightDistance = math.sqrt((abs((goalStateX - topRightX)) ** 2) + (abs((goalStateY - topRightY)) ** 2))
-    topLeftDistance = math.sqrt((abs((goalStateX - topLeftX)) ** 2) + (abs((goalStateY - topLeftY)) ** 2))
-    bottomRightDistance = math.sqrt((abs((goalStateX - bottomRightX)) ** 2) + (abs((goalStateY - bottomRightY)) ** 2))
-    bottomLeftDistance = math.sqrt((abs((goalStateX - bottomLeftX)) ** 2) + (abs((goalStateY - bottomLeftY)) ** 2))
-    '''
-    print("TopLeft: " + str(topLeftDistance) +"TopRight: " + str(topRightDistance) + ",BottomRight: " + str(
-        bottomRightDistance) + ",BottomLeft: " + str(bottomLeftDistance) + " for number: " + str(gridList[i].number))
-    '''
-    # rate Distances for heuristic
-    heuristicDistanceList = [topLeftDistance, topRightDistance, bottomRightDistance,
-                             bottomLeftDistance]  # topleft,topright,bottomright,bottomleft
-    hAmount = 0
-    for p in range(0, len(heuristicDistanceList)):
-        heuristicIndex = heuristicDistanceList.index(min(heuristicDistanceList))
-        heuristicDistanceList[heuristicIndex] = 100
-        gridList[i].heuristic[heuristicIndex] = hAmount
-        hAmount += 1
-
-    # gridList[i].printElement()
-
-openList = []
-closedList = []
-visitedState = []
-
-optimalPath = []
-
-startingNode = gridList[startCell - 1].nodes[1]
-currentNumber = startCell - 1
-currentNode = startingNode
-
-for i in range(len(gridList)):
-    gridList[i].printElement()
-
-
-def traverseGrid(currentGridNumber, nextNode):
-    visitedState.append(nextNode)
-    currentNodeList = []
-    for k in range(0, 4):
-        currentNodeList.append(gridList[currentGridNumber].nodes[k])
-    print("current node list: " + str(currentNodeList))
-    currentNodeIndex = currentNodeList.index(nextNode)
-    print("CurrentNodeIndex: " + str(currentNodeIndex))
-    nodeListIndex = letterList.index(nextNode)
-
-    # if the current node is on the top left, takes from left and top neighbour
-    # left movement cost comes from left neighbour, top movement cost comes from top neighbour
-    if currentNodeIndex == 0:
-        if gridList[currentGridNumber].neighbours[0] == -1:
-            leftCost = 10
-            leftHeuristic = 10
-            nodeLeft = ""
-            nodeLeftElement = ""
-        else:
-            leftCost = gridList[(gridList[currentGridNumber].neighbours[0]) - 1].cost[1]
-            leftHeuristic = gridList[(gridList[currentGridNumber].neighbours[0]) - 1].heuristic[0]
-            nodeLeft = letterList[nodeListIndex - 1]
-            nodeLeftElement = gridList[(gridList[currentGridNumber].neighbours[0]) - 1].number
-        if gridList[currentGridNumber].neighbours[1] == -1:
-            upCost = 10
-            upHeuristic = 10
-            nodeUp = ""
-            nodeUpElement = ""
-        else:
-            upCost = gridList[(gridList[currentGridNumber].neighbours[1]) - 1].cost[0]
-            upHeuristic = gridList[(gridList[currentGridNumber].neighbours[1]) - 1].heuristic[0]
-            nodeUp = letterList[nodeListIndex - (userColumns + 1)]
-            nodeUpElement = gridList[(gridList[currentGridNumber].neighbours[1]) - 1].number
-        rightCost = gridList[currentGridNumber].cost[1]
-        rightHeuristic = gridList[currentGridNumber].heuristic[1]
-        nodeRight = letterList[nodeListIndex + 1]
-        nodeRightElement = gridList[currentGridNumber].number
-        downCost = gridList[currentGridNumber].cost[0]
-        downHeuristic = gridList[currentGridNumber].heuristic[3]
-        nodeDown = letterList[nodeListIndex + (userColumns + 1)]
-        nodeDownElement = gridList[currentGridNumber].number
-        moveCost = [leftCost, upCost, rightCost, downCost]  # to move left,up,right,down
-        heuristicCost = [leftHeuristic, upHeuristic, rightHeuristic, downHeuristic]
-
-        algorithmCost = [leftCost + leftHeuristic, upCost + upHeuristic, rightCost + rightHeuristic,
-                         downCost + downHeuristic]
-        nextElement = [nodeLeftElement, nodeUpElement, nodeRightElement, nodeDownElement]
-
-    ##if current node is at top right
-    if currentNodeIndex == 1:
-        ##no right neighboour,set cost very high
-        if gridList[currentGridNumber].neighbours[2] == -1:
-            rightCost = 10
-            rightHeuristic = 10
-            nodeRight = ""
-            nodeRightElement = ""
-        else:
-            rightCost = gridList[(gridList[currentGridNumber].neighbours[2]) - 1].cost[1]
-            rightHeuristic = gridList[(gridList[currentGridNumber].neighbours[2]) - 1].heuristic[1]
-            nodeRight = letterList[nodeListIndex + 1]
-            nodeRightElement = gridList[(gridList[currentGridNumber].neighbours[2]) - 1].number
-        if gridList[currentGridNumber].neighbours[1] == -1:
-            upCost = 10
-            upHeuristic = 10
-            nodeUp = ""
-            nodeUpElement = ''
-        else:
-            upCost = gridList[(gridList[currentGridNumber].neighbours[1]) - 1].cost[2]
-            upHeuristic = gridList[(gridList[currentGridNumber].neighbours[1]) - 1].heuristic[1]
-            nodeUp = letterList[nodeListIndex - (userColumns + 1)]
-            nodeUpElement = gridList[(gridList[currentGridNumber].neighbours[1]) - 1].number
-        leftCost = gridList[currentGridNumber].cost[1]
-        leftHeuristic = gridList[currentGridNumber].heuristic[0]
-        nodeLeft = letterList[nodeListIndex - 1]
-        nodeLeftElement = gridList[currentGridNumber].number
-        downCost = gridList[currentGridNumber].cost[2]
-        downHeuristic = gridList[currentGridNumber].heuristic[2]
-        nodeDown = letterList[nodeListIndex + (userColumns + 1)]
-        nodeDownElement = gridList[currentGridNumber].number
-        moveCost = [leftCost, upCost, rightCost, downCost]  # to move left,up,right,down
-        heuristicCost = [leftHeuristic, upHeuristic, rightHeuristic, downHeuristic]
-
-        algorithmCost = [leftCost + leftHeuristic, upCost + upHeuristic, rightCost + rightHeuristic,
-                         downCost + downHeuristic]
-        nextElement = [nodeLeftElement, nodeUpElement, nodeRightElement, nodeDownElement]
-
-    ##if current node is at bottom right
-    if currentNodeIndex == 2:
-        if gridList[currentGridNumber].neighbours[2] == -1:
-            rightCost = 10
-            rightHeuristic = 10
-            nodeRight = ""
-            nodeRightElement = ''
-        else:
-            rightCost = gridList[(gridList[currentGridNumber].neighbours[2]) - 1].cost[3]
-            rightHeuristic = gridList[(gridList[currentGridNumber].neighbours[2]) - 1].heuristic[2]
-            nodeRight = letterList[nodeListIndex + 1]
-            nodeRightElement = gridList[(gridList[currentGridNumber].neighbours[2]) - 1].number
-        if gridList[currentGridNumber].neighbours[3] == -1:
-            downCost = 10
-            downHeuristic = 10
-            nodeDown = ""
-            nodeDownElement = ""
-        else:
-            downCost = gridList[(gridList[currentGridNumber].neighbours[3]) - 1].cost[2]
-            downHeuristic = gridList[(gridList[currentGridNumber].neighbours[3]) - 1].heuristic[2]
-            nodeDown = letterList[nodeListIndex + (userColumns + 1)]
-            nodeDownElement = gridList[(gridList[currentGridNumber].neighbours[3]) - 1].number
-        leftCost = gridList[currentGridNumber].cost[3]
-        leftHeuristic = gridList[currentGridNumber].heuristic[3]
-        nodeLeft = letterList[nodeListIndex - 1]
-        nodeLeftElement = gridList[currentGridNumber].number
-        upCost = gridList[currentGridNumber].cost[2]
-        upHeuristic = gridList[currentGridNumber].heuristic[1]
-        nodeUp = letterList[nodeListIndex - (userColumns + 1)]
-        nodeUpElement = gridList[currentGridNumber].number
-        moveCost = [leftCost, upCost, rightCost, downCost]
-        heuristicCost = [leftHeuristic, upHeuristic, rightHeuristic, downHeuristic]
-
-        algorithmCost = [leftCost + leftHeuristic, upCost + upHeuristic, rightCost + rightHeuristic,
-                         downCost + downHeuristic]
-        nextElement = [nodeLeftElement, nodeUpElement, nodeRightElement, nodeDownElement]
-
-    ##if current node is at bottom left
-    if currentNodeIndex == 3:
-        if gridList[currentGridNumber].neighbours[0] == -1:
-            leftCost = 10
-            leftHeuristic = 10
-            nodeLeft = ""
-            nodeLeftElement = ''
-        else:
-            leftCost = gridList[(gridList[currentGridNumber].neighbours[0]) - 1].cost[1]
-            leftHeuristic = gridList[(gridList[currentGridNumber].neighbours[0]) - 1].heuristic[3]
-            nodeLeft = letterList[nodeListIndex - 1]
-            nodeLeftElement = gridList[(gridList[currentGridNumber].neighbours[0]) - 1].number
-        if gridList[currentGridNumber].neighbours[3] == -1:
-            downCost = 10
-            downHeuristic = 10
-            nodeDown = ""
-            nodeDownElement = ''
-        else:
-            downCost = gridList[(gridList[currentGridNumber].neighbours[3]) - 1].cost[0]
-            downHeuristic = gridList[(gridList[currentGridNumber].neighbours[0]) - 1].heuristic[3]
-            nodeDown = letterList[nodeListIndex + (userColumns + 1)]
-            nodeDownElement = gridList[(gridList[currentGridNumber].neighbours[0]) - 1].number
-        rightCost = gridList[currentGridNumber].cost[3]
-        rightHeuristic = gridList[currentGridNumber].heuristic[2]
-        nodeRight = letterList[nodeListIndex + 1]
-        nodeRightElement = gridList[currentGridNumber].number
-        upCost = gridList[currentGridNumber].cost[0]
-        upHeuristic = gridList[currentGridNumber].heuristic[0]
-        nodeUp = letterList[nodeListIndex - (userColumns + 1)]
-        nodeUpElement = gridList[currentGridNumber].number
-        moveCost = [leftCost, upCost, rightCost, downCost]
-        heuristicCost = [leftHeuristic, upHeuristic, rightHeuristic, downHeuristic]
-
-        algorithmCost = [leftCost + leftHeuristic, upCost + upHeuristic, rightCost + rightHeuristic,
-                         downCost + downHeuristic]
-        nextElement = [nodeLeftElement, nodeUpElement, nodeRightElement, nodeDownElement]
-
-    print("Move cost: " + str(moveCost))
-    print("Heuristic cost: " + str(heuristicCost))
-    print("Algo cost: " + str(algorithmCost))
-    print("Directions: " + str(nextElement))
-
-    # algorithmCost #leftMove,upMove,rightMove,bottomMove costs
-    # move direction: 0:left, 1:up, 2:right, 3:down
-    openList.append(nodeLeft + "," + nodeUp + "," + nodeRight + "," + nodeDown)
-    moveDirection = algorithmCost.index(min(algorithmCost))
-    goalStateNode = gridList[goalState - 1].nodes[1]
-    print("Goal State Node: " + goalStateNode)
-    print("Visited state: " + str(visitedState))
-    # if 0 left
-
-    if len(visitedState) == 10:
-        print("No path found, too many playgrounds")
-        return
-
-    if moveDirection == 0:
-        print("Open List: " + str(openList))
-        nextCellNumber = nextElement[moveDirection]
-        if nodeLeft == goalStateNode:
-            visitedState.append(goalStateNode)
-            print("Visited state: " + str(visitedState))
-            print("Goal state reached")
-            return
-        else:
-            print("nextCellNumber: " + str(nextCellNumber))
-            print("nextNodeLeft: " + nodeLeft)
-            print("___________________")
-            return traverseGrid(nextCellNumber - 1, nodeLeft)
-
-    if moveDirection == 1:
-        print("Open List: " + str(openList))
-        nextCellNumber = nextElement[moveDirection]
-        if nodeRight == goalStateNode:
-            visitedState.append(goalStateNode)
-            print("Visited state: " + str(visitedState))
-            print("Goal state reached")
-            return
-        else:
-            print("nextCellNumber: " + str(nextCellNumber))
-            print("nextNodeUp: " + nodeUp)
-            print("___________________")
-            return traverseGrid(nextCellNumber - 1, nodeUp)
-
-    if moveDirection == 2:
-        print("Open List: " + str(openList))
-        nextCellNumber = nextElement[moveDirection]
-        if nodeRight == goalStateNode:
-            visitedState.append(goalStateNode)
-            print("Visited state: " + str(visitedState))
-            print("Goal state reached")
-            return
-        else:
-            print("nextCellNumber: " + str(nextCellNumber))
-            print("nextNodeRight: " + nodeRight)
-            print("___________________")
-            return traverseGrid(nextCellNumber - 1, nodeRight)
-
-    if moveDirection == 3:
-        print("Open List: " + str(openList))
-        nextCellNumber = nextElement[moveDirection]
-        if nodeDown == goalStateNode:
-            visitedState.append(goalStateNode)
-            print("Visited state: " + str(visitedState))
-            print("Goal state reached")
-            return
-
-        else:
-            print("nextCellNumber: " + str(nextCellNumber))
-            print("nextNodeDown: " + nodeDown)
-            print("___________________")
-            return traverseGrid(nextCellNumber - 1, nodeDown)
-
-
-# while goalStateNode != gridList[nextCell].nodes[1]:
-
-traverseGrid(currentNumber, startingNode)
-
-
-def aAlgorithm(element):
-    print("Optimal Path:")
-    optimalPath = PriorityQueue()
-
-
 
 # for role P: cost = (left,top,right,bottom)
 infinity = np.inf
