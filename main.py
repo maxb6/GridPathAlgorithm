@@ -150,9 +150,13 @@ if role == 'c' or role == 'C':
     # user input for x and y
     startCellxInput = float(input("\nEnter an x coordinate as the starting point/state (Choose between 0 and " + str(
         round(gridWidth, 2)) + "): "))
-    startCellyInput = float(input(
-        "Enter a y coordinate as the starting point/state (Choose between 0 and " + str(round(gridLength, 2)) + "): "))
-
+    if startCellxInput > userColumns*0.1 or startCellxInput < 0:
+        startCellxInput = float(input("Out of Range - Enter a number between 0 and " + str(round(gridWidth, 2)) + ": "))
+            
+    startCellyInput = float(input("Enter a y coordinate as the starting point/state (Choose between 0 and " + str(round(gridLength, 2)) + "): "))
+    if startCellyInput > userRows*0.2 or startCellyInput < 0:
+        startCellyInput = float(input("Out of Range - Enter a number between 0 and " + str(round(gridWidth, 2)) + ": "))
+   
     # finding the row and column obased on the user input
     startRow = (math.floor(startCellyInput / cellLength)) + 1
     print("Start state is in row: " + str(startRow))
@@ -210,8 +214,12 @@ if role == 'p' or role == 'P':
     # user input for x and y
     startCellxInput = float(input("\nEnter an x coordinate as the starting point/state (Choose between 0 and " + str(
         round(gridWidth, 2)) + "): "))
+    if startCellxInput > userColumns*0.1:
+        startCellxInput = float(input("Out of Range - Enter a number between 0 and " + str(round(gridWidth, 2)) + ": "))
     startCellyInput = float(input(
         "Enter a y coordinate as the starting point/state (Choose between 0 and " + str(round(gridLength, 2)) + "): "))
+    if startCellyInput > userRows*0.2:
+        startCellyInput = float(input("Out of Range - Enter a number between 0 and " + str(round(gridWidth, 2)) + ": "))
 
     # finding the row and column obased on the user input
     startRow = (math.floor(startCellyInput / cellLength)) + 1
@@ -776,7 +784,7 @@ def traverseGrid(currentCellNumber):
 # find value of left node
 
 
-traverseGrid(currentCell)
+#traverseGrid(currentCell)
 
 
 # while goalStateNode != gridList[nextCell].nodes[1]:
