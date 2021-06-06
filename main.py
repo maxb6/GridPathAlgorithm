@@ -123,10 +123,10 @@ lCounter = -1
 gCounter = 0
 
 for i in range(0, userRows):
-    for lCounter in range(lCounter+1 , lCounter + userColumns + 2):
-        #if lCounter % (userColumns+1) == 3:
-           # print(letterList[lCounter], end='')
-        #else:
+    for lCounter in range(lCounter + 1, lCounter + userColumns + 2):
+        # if lCounter % (userColumns+1) == 3:
+        # print(letterList[lCounter], end='')
+        # else:
         print(letterList[lCounter] + " ---- ", end='')
     # lCounter = lCounter + userColumns
     print("")
@@ -136,10 +136,10 @@ for i in range(0, userRows):
     # gCounter = gCounter + userColumns
     print("")
 for lCounter in range(lCounter + 1, lCounter + userColumns + 2):
-    #if lCounter == nodeAmount-1:
-       # print(letterList[lCounter], end='')
-    #else:
-     print(letterList[lCounter] + " ---- ", end='')
+    # if lCounter == nodeAmount-1:
+    # print(letterList[lCounter], end='')
+    # else:
+    print(letterList[lCounter] + " ---- ", end='')
 '''
 nodeAmount = (userColumns * userRows) + (userColumns + userRows + 1)
 
@@ -207,7 +207,7 @@ cellLength = 0.2
 gridWidth = cellWidth * userColumns
 gridLength = cellLength * userRows
 
-# For role C
+# For role C-----------------------------------------
 if role == 'c' or role == 'C':
     exists = 'Q' in genMap
     if (exists == False):
@@ -216,13 +216,14 @@ if role == 'c' or role == 'C':
     # user input for x and y
     startCellxInput = float(input("\nEnter an x coordinate as the starting point/state (Choose between 0 and " + str(
         round(gridWidth, 2)) + "): "))
-    if startCellxInput > userColumns*0.1 or startCellxInput < 0:
+    if startCellxInput > userColumns * 0.1 or startCellxInput < 0:
         startCellxInput = float(input("Out of Range - Enter a number between 0 and " + str(round(gridWidth, 2)) + ": "))
-            
-    startCellyInput = float(input("Enter a y coordinate as the starting point/state (Choose between 0 and " + str(round(gridLength, 2)) + "): "))
-    if startCellyInput > userRows*0.2 or startCellyInput < 0:
+
+    startCellyInput = float(input(
+        "Enter a y coordinate as the starting point/state (Choose between 0 and " + str(round(gridLength, 2)) + "): "))
+    if startCellyInput > userRows * 0.2 or startCellyInput < 0:
         startCellyInput = float(input("Out of Range - Enter a number between 0 and " + str(round(gridWidth, 2)) + ": "))
-   
+
     # finding the row and column obased on the user input
     startRow = (math.floor(startCellyInput / cellLength)) + 1
     print("Start state is in row: " + str(startRow))
@@ -852,11 +853,11 @@ if role == 'p' or role == 'P':
     # user input for x and y
     startCellxInput = float(input("\nEnter an x coordinate as the starting point/state (Choose between 0 and " + str(
         round(gridWidth, 2)) + "): "))
-    if startCellxInput > userColumns*0.1:
+    if startCellxInput > userColumns * 0.1:
         startCellxInput = float(input("Out of Range - Enter a number between 0 and " + str(round(gridWidth, 2)) + ": "))
     startCellyInput = float(input(
         "Enter a y coordinate as the starting point/state (Choose between 0 and " + str(round(gridLength, 2)) + "): "))
-    if startCellyInput > userRows*0.2:
+    if startCellyInput > userRows * 0.2:
         startCellyInput = float(input("Out of Range - Enter a number between 0 and " + str(round(gridWidth, 2)) + ": "))
 
     # finding the row and column obased on the user input
@@ -884,11 +885,14 @@ if role == 'p' or role == 'P':
 
     for i in range(0, len(goalStateList)):
         goalStateRow = math.ceil(goalStateList[i] / userRows)
-        goalStateColumn = goalStateList[i] % userColumns
-        if goalStateColumn == 0:
+        if goalStateList[i] % userColumns == 0:
             goalStateColumn = userColumns
-        goalYList.append((goalStateRow * 0.2))
-        goalXList.append(((goalStateColumn - 1) * 0.1))
+        else:
+            goalStateColumn = goalStateList[i] % userColumns
+        print("goal row: " + str(goalStateRow))
+        print("goal column: " + str(goalStateColumn))
+        goalXList.append(goalStateColumn * 0.1)
+        goalYList.append(((goalStateRow-1) * 0.2))
 
     for i in range(0, len(goalStateList)):
         distanceList.append(
@@ -901,10 +905,14 @@ if role == 'p' or role == 'P':
     print("Goal State Cell Number: " + str(goalState))
     goalStateX = goalXList[goalDistanceIndex]
     goalStateY = goalYList[goalDistanceIndex]
+    print("GOAL state LIST: " + str(goalStateList))
+    print("GOAL X LIST: " + str(goalXList))
+    print("GOAL Y LIST: " + str(goalYList))
+    print("Goal state Coordinates: " + str(goalStateX) + "," + str(goalStateY))
 
     print("\nStarting State: ", genMap[startCell - 1], "(Cell: ", startCell, ")   ------->  Goal State: P ", "(Cell: ",
           goalState, ")")
-        
+
     #############   STEP 5 -- Cost
 
     # find neighbours numbers for each gridElement
@@ -1165,7 +1173,7 @@ if role == 'p' or role == 'P':
                 gridList[i].cost[3] = 1.5
             if gridList[i].locationType == "P":
                 gridList[i].cost[3] = 0.5
-                
+
     print("\n=========================================================================")
 
     #############   STEP 6 -- Heuristic and A* Algorithms for Optimal Path
@@ -1190,16 +1198,21 @@ if role == 'p' or role == 'P':
         bottomLeftX = topLeftX
         bottomLeftY = bottomRightY
 
+        #gather all q's coordinates in map
+
+
         # get distance to goal state
         topRightDistance = math.sqrt((abs((goalStateX - topRightX)) ** 2) + (abs((goalStateY - topRightY)) ** 2))
         topLeftDistance = math.sqrt((abs((goalStateX - topLeftX)) ** 2) + (abs((goalStateY - topLeftY)) ** 2))
         bottomRightDistance = math.sqrt(
             (abs((goalStateX - bottomRightX)) ** 2) + (abs((goalStateY - bottomRightY)) ** 2))
         bottomLeftDistance = math.sqrt((abs((goalStateX - bottomLeftX)) ** 2) + (abs((goalStateY - bottomLeftY)) ** 2))
-        '''
-        print("TopLeft: " + str(topLeftDistance) +"TopRight: " + str(topRightDistance) + ",BottomRight: " + str(
-            bottomRightDistance) + ",BottomLeft: " + str(bottomLeftDistance) + " for number: " + str(gridList[i].number))
-        '''
+
+        print(str(gridList[i].number) + "      TopLeft: " + str(topLeftDistance) + "TopRight: " + str(
+            topRightDistance) + ",BottomRight: " + str(
+            bottomRightDistance) + ",BottomLeft: " + str(bottomLeftDistance) + " for number: " + str(
+            gridList[i].number))
+
         # rate Distances for heuristic
         heuristicDistanceList = [topLeftDistance, topRightDistance, bottomRightDistance,
                                  bottomLeftDistance]  # topleft,topright,bottomright,bottomleft
@@ -1226,7 +1239,7 @@ if role == 'p' or role == 'P':
         gridList[i].printElement()
 
 
-    def traverseGrid(currentGridNumber, nextNode):
+    def traverseGrid2(currentGridNumber, nextNode):
         visitedState.append(nextNode)
         currentNodeList = []
         for k in range(0, 4):
@@ -1416,7 +1429,7 @@ if role == 'p' or role == 'P':
                 print("nextCellNumber: " + str(nextCellNumber))
                 print("nextNodeLeft: " + nodeLeft)
                 print("___________________")
-                return traverseGrid(nextCellNumber - 1, nodeLeft)
+                return traverseGrid2(nextCellNumber - 1, nodeLeft)
 
         if moveDirection == 1:
             print("Open List: " + str(openList))
@@ -1430,7 +1443,7 @@ if role == 'p' or role == 'P':
                 print("nextCellNumber: " + str(nextCellNumber))
                 print("nextNodeUp: " + nodeUp)
                 print("___________________")
-                return traverseGrid(nextCellNumber - 1, nodeUp)
+                return traverseGrid2(nextCellNumber - 1, nodeUp)
 
         if moveDirection == 2:
             print("Open List: " + str(openList))
@@ -1444,7 +1457,7 @@ if role == 'p' or role == 'P':
                 print("nextCellNumber: " + str(nextCellNumber))
                 print("nextNodeRight: " + nodeRight)
                 print("___________________")
-                return traverseGrid(nextCellNumber - 1, nodeRight)
+                return traverseGrid2(nextCellNumber - 1, nodeRight)
 
         if moveDirection == 3:
             print("Open List: " + str(openList))
@@ -1459,10 +1472,9 @@ if role == 'p' or role == 'P':
                 print("nextCellNumber: " + str(nextCellNumber))
                 print("nextNodeDown: " + nodeDown)
                 print("___________________")
-                return traverseGrid(nextCellNumber - 1, nodeDown)
+                return traverseGrid2(nextCellNumber - 1, nodeDown)
 
 
     # while goalStateNode != gridList[nextCell].nodes[1]:
 
-    traverseGrid(currentNumber, startingNode)
-
+    traverseGrid2(currentNumber, startingNode)
