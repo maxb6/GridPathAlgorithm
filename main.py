@@ -102,7 +102,7 @@ for i in range(0, len(gridList)):
     else:
         genMap.append(gridList[i].locationType)
 
-letterList = (list(string.ascii_letters))  # list of alphabetical edges (lowercase then uppercase)
+letterList = (list(string.ascii_letters)+list(string.ascii_letters)+list(string.ascii_letters)+list(string.ascii_letters))  # list of alphabetical edges (lowercase then uppercase)
 
 rc = 0
 for i in range(0, len(gridList)):
