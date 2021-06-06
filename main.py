@@ -837,8 +837,8 @@ while True:
                 goalStateColumn = userColumns
             else:
                 goalStateColumn = goalStateList[i] % userColumns
-            print("goal row: " + str(goalStateRow))
-            print("goal column: " + str(goalStateColumn))
+            #print("goal row: " + str(goalStateRow))
+            #print("goal column: " + str(goalStateColumn))
             goalXList.append(goalStateColumn * 0.1)
             goalYList.append(((goalStateRow - 1) * 0.2))
 
@@ -853,9 +853,9 @@ while True:
         print("Goal State Cell Number: " + str(goalState))
         goalStateX = goalXList[goalDistanceIndex]
         goalStateY = goalYList[goalDistanceIndex]
-        print("GOAL state LIST: " + str(goalStateList))
-        print("GOAL X LIST: " + str(goalXList))
-        print("GOAL Y LIST: " + str(goalYList))
+        #print("GOAL state LIST: " + str(goalStateList))
+        #print("GOAL X LIST: " + str(goalXList))
+        #print("GOAL Y LIST: " + str(goalYList))
         print("Goal state Coordinates: " + str(goalStateX) + "," + str(goalStateY))
 
         print("\nStarting State: ", genMap[startCell - 1], "(Cell: ", startCell, ")   ------->  Goal State: P ",
@@ -1144,13 +1144,13 @@ while True:
                 qStateColumn = userColumns
             else:
                 qStateColumn = qStateList[i] % userColumns
-            print("q row: " + str(qStateRow))
-            print("q column: " + str(qStateColumn))
+            #print("q row: " + str(qStateRow))
+            #print("q column: " + str(qStateColumn))
             qXList.append(qStateColumn * 0.1)
             qYList.append(((qStateRow - 1) * 0.2))
-        print("Q state LIST: " + str(qStateList))
-        print("QXLIST: " + str(qXList))
-        print("QYLIST: " + str(qYList))
+        #print("Q state LIST: " + str(qStateList))
+        #print("QXLIST: " + str(qXList))
+        #print("QYLIST: " + str(qYList))
 
         #############   STEP 6 -- Heuristic and A* Algorithms for Optimal Path
         for l in range(0, len(gridList)):
@@ -1179,13 +1179,13 @@ while True:
             for p in range(0, len(qStateList)):
                 qDistanceList.append(
                     math.sqrt((abs((qXList[p] - topRightX)) ** 2) + (abs((qYList[p] - topRightY)) ** 2)))
-            print("Q distance list: " + str(qDistanceList))
+            #print("Q distance list: " + str(qDistanceList))
 
             qDistanceIndex = qDistanceList.index(min(qDistanceList))
-            print("Q distance index: " + str(qDistanceIndex))
+            #print("Q distance index: " + str(qDistanceIndex))
 
             closestQState = qStateList[qDistanceIndex]
-            print("Closest Q Number: " + str(closestQState))
+            #print("Closest Q Number: " + str(closestQState))
             qStateX = qXList[qDistanceIndex]
             qStateY = qYList[qDistanceIndex]
 
@@ -1196,10 +1196,10 @@ while True:
                 (abs((qStateX - bottomRightX)) ** 2) + (abs((qStateY - bottomRightY)) ** 2))
             bottomLeftDistanceQ = math.sqrt((abs((qStateX - bottomLeftX)) ** 2) + (abs((qStateY - bottomLeftY)) ** 2))
 
-            print(str(gridList[i].number) + "      TopLeft: " + str(topLeftDistanceQ) + "TopRight: " + str(
-                topRightDistanceQ) + ",BottomRight: " + str(
-                bottomRightDistanceQ) + ",BottomLeft: " + str(bottomLeftDistanceQ) + " for number: " + str(
-                gridList[i].number))
+            #print(str(gridList[i].number) + "      TopLeft: " + str(topLeftDistanceQ) + "TopRight: " + str(
+                #topRightDistanceQ) + ",BottomRight: " + str(
+                #bottomRightDistanceQ) + ",BottomLeft: " + str(bottomLeftDistanceQ) + " for number: " + str(
+                #gridList[i].number))
 
             # rate Distances for heuristic
             heuristicDistanceListQ = [topLeftDistanceQ, topRightDistanceQ, bottomRightDistanceQ,
@@ -1213,10 +1213,10 @@ while True:
             bottomLeftDistance = math.sqrt(
                 (abs((goalStateX - bottomLeftX)) ** 2) + (abs((goalStateY - bottomLeftY)) ** 2))
 
-            print(str(gridList[i].number) + "      TopLeft: " + str(topLeftDistance) + "TopRight: " + str(
-                topRightDistance) + ",BottomRight: " + str(
-                bottomRightDistance) + ",BottomLeft: " + str(bottomLeftDistance) + " for number: " + str(
-                gridList[i].number))
+            #print(str(gridList[i].number) + "      TopLeft: " + str(topLeftDistance) + "TopRight: " + str(
+                #topRightDistance) + ",BottomRight: " + str(
+                #bottomRightDistance) + ",BottomLeft: " + str(bottomLeftDistance) + " for number: " + str(
+                #gridList[i].number))
 
             # rate Distances for heuristic
             heuristicDistanceList = [topLeftDistance, topRightDistance, bottomRightDistance,
@@ -1229,7 +1229,7 @@ while True:
                 heuristic1List[heuristic1Index] = h1Amount
                 h1Amount += 1
 
-            print("H1GoalDistance: ", str(heuristic1List))
+            #print("H1GoalDistance: ", str(heuristic1List))
 
             h2Amount = 0
             heuristic2List = [-1, -1, -1, -1]
@@ -1239,12 +1239,12 @@ while True:
                 heuristic2List[heuristic2Index] = h2Amount
                 h2Amount += 1
 
-            print("H2closestQDistance: ", str(heuristic2List))
+            #print("H2closestQDistance: ", str(heuristic2List))
 
             heuristicFinalList = []
             for p in range(0, len(heuristic1List)):
                 heuristicFinalList.append((0.75 * heuristic1List[p]) + (0.25 * heuristic2List[p]))
-            print("Hcombined: ", str(heuristicFinalList))
+            #print("Hcombined: ", str(heuristicFinalList))
 
             heuristicFinalList = [-1, -1, -1, -1]
             h3Amount = 0
@@ -1264,18 +1264,23 @@ while True:
         currentNumber = startCell - 1
         currentNode = startingNode
 
-        for i in range(len(gridList)):
-            gridList[i].printElement()
+        goalStateNode = gridList[goalState - 1].nodes[1]
+        print("Starting Node: " + startingNode)
+        print("Goal State Node: " + goalStateNode)
+
+        if goalStateNode==startingNode:
+            print("SEARCH ALGORITHM PATH: " + str(visitedState))
 
 
         def traverseGrid2(currentGridNumber, nextNode):
+            #if goalStateNode==startingNode:
             visitedState.append(nextNode)
             currentNodeList = []
             for k in range(0, 4):
                 currentNodeList.append(gridList[currentGridNumber].nodes[k])
-            print("current node list: " + str(currentNodeList))
+            #print("current node list: " + str(currentNodeList))
             currentNodeIndex = currentNodeList.index(nextNode)
-            print("CurrentNodeIndex: " + str(currentNodeIndex))
+            #print("CurrentNodeIndex: " + str(currentNodeIndex))
             nodeListIndex = letterList.index(nextNode)
 
             # if the current node is on the top left, takes from left and top neighbour
@@ -1428,18 +1433,20 @@ while True:
                                  downCost + downHeuristic]
                 nextElement = [nodeLeftElement, nodeUpElement, nodeRightElement, nodeDownElement]
 
+            '''
             print("Move cost: " + str(moveCost))
             print("Heuristic cost: " + str(heuristicCost))
             print("Algo cost: " + str(algorithmCost))
             print("Directions: " + str(nextElement))
+            '''
 
             # algorithmCost #leftMove,upMove,rightMove,bottomMove costs
             # move direction: 0:left, 1:up, 2:right, 3:down
             openList.append(nodeLeft + "," + nodeUp + "," + nodeRight + "," + nodeDown)
             moveDirection = algorithmCost.index(min(algorithmCost))
             goalStateNode = gridList[goalState - 1].nodes[1]
-            print("Goal State Node: " + goalStateNode)
-            print("Visited state: " + str(visitedState))
+            #print("Goal State Node: " + goalStateNode)
+            #print("Visited state: " + str(visitedState))
             # if 0 left
 
             if len(visitedState) == 10:
@@ -1447,60 +1454,48 @@ while True:
                 return
 
             if moveDirection == 0:
-                print("Open List: " + str(openList))
+                #print("Open List: " + str(openList))
                 nextCellNumber = nextElement[moveDirection]
                 if nodeLeft == goalStateNode:
                     visitedState.append(goalStateNode)
-                    print("Visited state: " + str(visitedState))
+                    print("SEARCH ALGORITHM PATH: " + str(visitedState))
                     print("Goal state reached")
                     return
                 else:
-                    print("nextCellNumber: " + str(nextCellNumber))
-                    print("nextNodeLeft: " + nodeLeft)
-                    print("___________________")
                     return traverseGrid2(nextCellNumber - 1, nodeLeft)
 
             if moveDirection == 1:
-                print("Open List: " + str(openList))
+                #print("Open List: " + str(openList))
                 nextCellNumber = nextElement[moveDirection]
                 if nodeRight == goalStateNode:
                     visitedState.append(goalStateNode)
-                    print("Visited state: " + str(visitedState))
+                    print("SEARCH ALGORITHM PATH: " + str(visitedState))
                     print("Goal state reached")
                     return
                 else:
-                    print("nextCellNumber: " + str(nextCellNumber))
-                    print("nextNodeUp: " + nodeUp)
-                    print("___________________")
                     return traverseGrid2(nextCellNumber - 1, nodeUp)
 
             if moveDirection == 2:
-                print("Open List: " + str(openList))
+                #print("Open List: " + str(openList))
                 nextCellNumber = nextElement[moveDirection]
                 if nodeRight == goalStateNode:
                     visitedState.append(goalStateNode)
-                    print("Visited state: " + str(visitedState))
+                    print("SEARCH ALGORITHM PATH: " + str(visitedState))
                     print("Goal state reached")
                     return
                 else:
-                    print("nextCellNumber: " + str(nextCellNumber))
-                    print("nextNodeRight: " + nodeRight)
-                    print("___________________")
                     return traverseGrid2(nextCellNumber - 1, nodeRight)
 
             if moveDirection == 3:
-                print("Open List: " + str(openList))
+                #print("Open List: " + str(openList))
                 nextCellNumber = nextElement[moveDirection]
                 if nodeDown == goalStateNode:
                     visitedState.append(goalStateNode)
-                    print("Visited state: " + str(visitedState))
+                    print("SEARCH ALGORITHM PATH: " + str(visitedState))
                     print("Goal state reached")
                     return
 
                 else:
-                    print("nextCellNumber: " + str(nextCellNumber))
-                    print("nextNodeDown: " + nodeDown)
-                    print("___________________")
                     return traverseGrid2(nextCellNumber - 1, nodeDown)
 
 
@@ -1508,5 +1503,6 @@ while True:
 
         traverseGrid2(currentNumber, startingNode)
 
-        if input("Would you like to traverse the map again:(y/n) ") == 'n':
-            break
+    if input("\n\nWould you like to see and traverse the map again:(y/n) ") == 'n':
+        print()
+        break
