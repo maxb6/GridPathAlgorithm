@@ -81,10 +81,6 @@ gridList = []
 for i in range(1, gridSize + 1):  # iterate over all items in grid
     e = createGridElement(i)
     gridList.append(e)
-    '''
-    e.printElement()
-    print("_________________________")
-    '''
 
 print("=========================================================================")
 #############   STEP 3 -- Visual of map locations
@@ -486,18 +482,6 @@ while True:
                 if gridList[i].locationType == "P":
                     gridList[i].cost[3] = 2
 
-        '''
-        for i in range(len(nodeList)):
-            if i <= userColumns:
-                nodeList[i].moveCost = [gridList[i-1].cost[1], gridList[i - 1].cost[2], gridList[i].cost[1], gridList[i].cost[0]]
-            if userColumns < i <= userColumns*2:
-                nodeList[i].moveCost = [gridList[i - 2].cost[1], gridList[i - 2].cost[2], gridList[i-1].cost[1],
-                                        gridList[i-1].cost[0]]
-            if userColumns*2 < i <= userColumns*3:
-                nodeList[i].moveCost = [gridList[i - 3].cost[1], gridList[i - 3].cost[2], gridList[i-2].cost[1],
-                                        gridList[i-2].cost[0]]
-        '''
-
         print("\n=========================================================================")
 
         #############   STEP 6 -- Heuristic and A* Algorithms for Optimal Path
@@ -529,10 +513,7 @@ while True:
                 (abs((goalStateX - bottomRightX)) ** 2) + (abs((goalStateY - bottomRightY)) ** 2))
             bottomLeftDistance = math.sqrt(
                 (abs((goalStateX - bottomLeftX)) ** 2) + (abs((goalStateY - bottomLeftY)) ** 2))
-            '''
-            print("TopLeft: " + str(topLeftDistance) +"TopRight: " + str(topRightDistance) + ",BottomRight: " + str(
-                bottomRightDistance) + ",BottomLeft: " + str(bottomLeftDistance) + " for number: " + str(gridList[i].number))
-            '''
+
             # rate Distances for heuristic
             heuristicDistanceList = [topLeftDistance, topRightDistance, bottomRightDistance,
                                      bottomLeftDistance]  # topleft,topright,bottomright,bottomleft
@@ -721,12 +702,7 @@ while True:
                 algorithmCost = [leftCost + leftHeuristic, upCost + upHeuristic, rightCost + rightHeuristic,
                                  downCost + downHeuristic]
                 nextElement = [nodeLeftElement, nodeUpElement, nodeRightElement, nodeDownElement]
-            '''
-            print("Move cost: " + str(moveCost))
-            print("Heuristic cost: " + str(heuristicCost))
-            print("Algo cost: " + str(algorithmCost))
-            print("Directions: " + str(nextElement))
-            '''
+
             # algorithmCost #leftMove,upMove,rightMove,bottomMove costs
             # move direction: 0:left, 1:up, 2:right, 3:down
             openList.append(nodeLeft + "," + nodeUp + "," + nodeRight + "," + nodeDown)
